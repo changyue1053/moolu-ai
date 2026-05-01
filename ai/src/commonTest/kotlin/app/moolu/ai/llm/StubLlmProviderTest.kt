@@ -5,9 +5,9 @@ import app.moolu.foundation.testing.fakeClock
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import kotlin.test.Test
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
+import kotlin.test.Test
 
 /**
  * Coverage for [StubLlmProvider] — the offline / pre-backend

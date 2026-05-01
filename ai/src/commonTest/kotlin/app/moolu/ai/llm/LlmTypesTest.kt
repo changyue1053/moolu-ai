@@ -3,10 +3,10 @@ package app.moolu.ai.llm
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
-import kotlin.test.Test
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlin.test.Test
 
 /**
  * Unit coverage for the data contracts in `app.moolu.ai.llm`.

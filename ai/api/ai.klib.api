@@ -1,0 +1,334 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <app.moolu:ai>
+final enum class app.moolu.ai.llm/FinishReason : kotlin/Enum<app.moolu.ai.llm/FinishReason> { // app.moolu.ai.llm/FinishReason|null[0]
+    enum entry Cancelled // app.moolu.ai.llm/FinishReason.Cancelled|null[0]
+    enum entry ContentFilter // app.moolu.ai.llm/FinishReason.ContentFilter|null[0]
+    enum entry Length // app.moolu.ai.llm/FinishReason.Length|null[0]
+    enum entry Network // app.moolu.ai.llm/FinishReason.Network|null[0]
+    enum entry Stop // app.moolu.ai.llm/FinishReason.Stop|null[0]
+    enum entry ToolCall // app.moolu.ai.llm/FinishReason.ToolCall|null[0]
+    enum entry Unknown // app.moolu.ai.llm/FinishReason.Unknown|null[0]
+
+    final val entries // app.moolu.ai.llm/FinishReason.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<app.moolu.ai.llm/FinishReason> // app.moolu.ai.llm/FinishReason.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): app.moolu.ai.llm/FinishReason // app.moolu.ai.llm/FinishReason.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<app.moolu.ai.llm/FinishReason> // app.moolu.ai.llm/FinishReason.values|values#static(){}[0]
+}
+
+abstract fun interface app.moolu.ai.llm/AiEventReporter { // app.moolu.ai.llm/AiEventReporter|null[0]
+    abstract fun captureLlmError(kotlin/Throwable, kotlin/String, kotlin/String?) // app.moolu.ai.llm/AiEventReporter.captureLlmError|captureLlmError(kotlin.Throwable;kotlin.String;kotlin.String?){}[0]
+
+    final object NoOp : app.moolu.ai.llm/AiEventReporter { // app.moolu.ai.llm/AiEventReporter.NoOp|null[0]
+        final fun captureLlmError(kotlin/Throwable, kotlin/String, kotlin/String?) // app.moolu.ai.llm/AiEventReporter.NoOp.captureLlmError|captureLlmError(kotlin.Throwable;kotlin.String;kotlin.String?){}[0]
+    }
+}
+
+abstract interface app.moolu.ai.llm/LlmProvider { // app.moolu.ai.llm/LlmProvider|null[0]
+    abstract val capabilities // app.moolu.ai.llm/LlmProvider.capabilities|{}capabilities[0]
+        abstract fun <get-capabilities>(): app.moolu.ai.llm/LlmCapabilities // app.moolu.ai.llm/LlmProvider.capabilities.<get-capabilities>|<get-capabilities>(){}[0]
+
+    abstract fun stream(kotlin.collections/List<app.moolu.ai.llm/Message>, app.moolu.ai.llm/GenOptions = ...): kotlinx.coroutines.flow/Flow<app.moolu.ai.llm/TokenChunk> // app.moolu.ai.llm/LlmProvider.stream|stream(kotlin.collections.List<app.moolu.ai.llm.Message>;app.moolu.ai.llm.GenOptions){}[0]
+    abstract suspend fun complete(kotlin.collections/List<app.moolu.ai.llm/Message>, app.moolu.ai.llm/GenOptions = ...): app.moolu.ai.llm/Completion // app.moolu.ai.llm/LlmProvider.complete|complete(kotlin.collections.List<app.moolu.ai.llm.Message>;app.moolu.ai.llm.GenOptions){}[0]
+}
+
+final class app.moolu.ai.llm/Completion { // app.moolu.ai.llm/Completion|null[0]
+    constructor <init>(app.moolu.ai.llm/Message, app.moolu.ai.llm/FinishReason, app.moolu.ai.llm/Usage? = ...) // app.moolu.ai.llm/Completion.<init>|<init>(app.moolu.ai.llm.Message;app.moolu.ai.llm.FinishReason;app.moolu.ai.llm.Usage?){}[0]
+
+    final val finishReason // app.moolu.ai.llm/Completion.finishReason|{}finishReason[0]
+        final fun <get-finishReason>(): app.moolu.ai.llm/FinishReason // app.moolu.ai.llm/Completion.finishReason.<get-finishReason>|<get-finishReason>(){}[0]
+    final val message // app.moolu.ai.llm/Completion.message|{}message[0]
+        final fun <get-message>(): app.moolu.ai.llm/Message // app.moolu.ai.llm/Completion.message.<get-message>|<get-message>(){}[0]
+    final val usage // app.moolu.ai.llm/Completion.usage|{}usage[0]
+        final fun <get-usage>(): app.moolu.ai.llm/Usage? // app.moolu.ai.llm/Completion.usage.<get-usage>|<get-usage>(){}[0]
+
+    final fun component1(): app.moolu.ai.llm/Message // app.moolu.ai.llm/Completion.component1|component1(){}[0]
+    final fun component2(): app.moolu.ai.llm/FinishReason // app.moolu.ai.llm/Completion.component2|component2(){}[0]
+    final fun component3(): app.moolu.ai.llm/Usage? // app.moolu.ai.llm/Completion.component3|component3(){}[0]
+    final fun copy(app.moolu.ai.llm/Message = ..., app.moolu.ai.llm/FinishReason = ..., app.moolu.ai.llm/Usage? = ...): app.moolu.ai.llm/Completion // app.moolu.ai.llm/Completion.copy|copy(app.moolu.ai.llm.Message;app.moolu.ai.llm.FinishReason;app.moolu.ai.llm.Usage?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.llm/Completion.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.moolu.ai.llm/Completion.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.moolu.ai.llm/Completion.toString|toString(){}[0]
+}
+
+final class app.moolu.ai.llm/GenOptions { // app.moolu.ai.llm/GenOptions|null[0]
+    constructor <init>(kotlin/String? = ..., kotlin/Double? = ..., kotlin/Double? = ..., kotlin/Int? = ..., kotlin.collections/List<kotlin/String> = ..., kotlin/Long? = ...) // app.moolu.ai.llm/GenOptions.<init>|<init>(kotlin.String?;kotlin.Double?;kotlin.Double?;kotlin.Int?;kotlin.collections.List<kotlin.String>;kotlin.Long?){}[0]
+
+    final val maxTokens // app.moolu.ai.llm/GenOptions.maxTokens|{}maxTokens[0]
+        final fun <get-maxTokens>(): kotlin/Int? // app.moolu.ai.llm/GenOptions.maxTokens.<get-maxTokens>|<get-maxTokens>(){}[0]
+    final val model // app.moolu.ai.llm/GenOptions.model|{}model[0]
+        final fun <get-model>(): kotlin/String? // app.moolu.ai.llm/GenOptions.model.<get-model>|<get-model>(){}[0]
+    final val seed // app.moolu.ai.llm/GenOptions.seed|{}seed[0]
+        final fun <get-seed>(): kotlin/Long? // app.moolu.ai.llm/GenOptions.seed.<get-seed>|<get-seed>(){}[0]
+    final val stop // app.moolu.ai.llm/GenOptions.stop|{}stop[0]
+        final fun <get-stop>(): kotlin.collections/List<kotlin/String> // app.moolu.ai.llm/GenOptions.stop.<get-stop>|<get-stop>(){}[0]
+    final val temperature // app.moolu.ai.llm/GenOptions.temperature|{}temperature[0]
+        final fun <get-temperature>(): kotlin/Double? // app.moolu.ai.llm/GenOptions.temperature.<get-temperature>|<get-temperature>(){}[0]
+    final val topP // app.moolu.ai.llm/GenOptions.topP|{}topP[0]
+        final fun <get-topP>(): kotlin/Double? // app.moolu.ai.llm/GenOptions.topP.<get-topP>|<get-topP>(){}[0]
+
+    final fun component1(): kotlin/String? // app.moolu.ai.llm/GenOptions.component1|component1(){}[0]
+    final fun component2(): kotlin/Double? // app.moolu.ai.llm/GenOptions.component2|component2(){}[0]
+    final fun component3(): kotlin/Double? // app.moolu.ai.llm/GenOptions.component3|component3(){}[0]
+    final fun component4(): kotlin/Int? // app.moolu.ai.llm/GenOptions.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/List<kotlin/String> // app.moolu.ai.llm/GenOptions.component5|component5(){}[0]
+    final fun component6(): kotlin/Long? // app.moolu.ai.llm/GenOptions.component6|component6(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/Double? = ..., kotlin/Double? = ..., kotlin/Int? = ..., kotlin.collections/List<kotlin/String> = ..., kotlin/Long? = ...): app.moolu.ai.llm/GenOptions // app.moolu.ai.llm/GenOptions.copy|copy(kotlin.String?;kotlin.Double?;kotlin.Double?;kotlin.Int?;kotlin.collections.List<kotlin.String>;kotlin.Long?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.llm/GenOptions.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.moolu.ai.llm/GenOptions.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.moolu.ai.llm/GenOptions.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.moolu.ai.llm/GenOptions> { // app.moolu.ai.llm/GenOptions.$serializer|null[0]
+        final val descriptor // app.moolu.ai.llm/GenOptions.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // app.moolu.ai.llm/GenOptions.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.moolu.ai.llm/GenOptions.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): app.moolu.ai.llm/GenOptions // app.moolu.ai.llm/GenOptions.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, app.moolu.ai.llm/GenOptions) // app.moolu.ai.llm/GenOptions.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.moolu.ai.llm.GenOptions){}[0]
+    }
+
+    final object Companion { // app.moolu.ai.llm/GenOptions.Companion|null[0]
+        final val $childSerializers // app.moolu.ai.llm/GenOptions.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<app.moolu.ai.llm/GenOptions> // app.moolu.ai.llm/GenOptions.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class app.moolu.ai.llm/LlmCapabilities { // app.moolu.ai.llm/LlmCapabilities|null[0]
+    constructor <init>(kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ...) // app.moolu.ai.llm/LlmCapabilities.<init>|<init>(kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean){}[0]
+
+    final val audio // app.moolu.ai.llm/LlmCapabilities.audio|{}audio[0]
+        final fun <get-audio>(): kotlin/Boolean // app.moolu.ai.llm/LlmCapabilities.audio.<get-audio>|<get-audio>(){}[0]
+    final val reasoning // app.moolu.ai.llm/LlmCapabilities.reasoning|{}reasoning[0]
+        final fun <get-reasoning>(): kotlin/Boolean // app.moolu.ai.llm/LlmCapabilities.reasoning.<get-reasoning>|<get-reasoning>(){}[0]
+    final val streaming // app.moolu.ai.llm/LlmCapabilities.streaming|{}streaming[0]
+        final fun <get-streaming>(): kotlin/Boolean // app.moolu.ai.llm/LlmCapabilities.streaming.<get-streaming>|<get-streaming>(){}[0]
+    final val tools // app.moolu.ai.llm/LlmCapabilities.tools|{}tools[0]
+        final fun <get-tools>(): kotlin/Boolean // app.moolu.ai.llm/LlmCapabilities.tools.<get-tools>|<get-tools>(){}[0]
+    final val vision // app.moolu.ai.llm/LlmCapabilities.vision|{}vision[0]
+        final fun <get-vision>(): kotlin/Boolean // app.moolu.ai.llm/LlmCapabilities.vision.<get-vision>|<get-vision>(){}[0]
+
+    final fun component1(): kotlin/Boolean // app.moolu.ai.llm/LlmCapabilities.component1|component1(){}[0]
+    final fun component2(): kotlin/Boolean // app.moolu.ai.llm/LlmCapabilities.component2|component2(){}[0]
+    final fun component3(): kotlin/Boolean // app.moolu.ai.llm/LlmCapabilities.component3|component3(){}[0]
+    final fun component4(): kotlin/Boolean // app.moolu.ai.llm/LlmCapabilities.component4|component4(){}[0]
+    final fun component5(): kotlin/Boolean // app.moolu.ai.llm/LlmCapabilities.component5|component5(){}[0]
+    final fun copy(kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ...): app.moolu.ai.llm/LlmCapabilities // app.moolu.ai.llm/LlmCapabilities.copy|copy(kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.llm/LlmCapabilities.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.moolu.ai.llm/LlmCapabilities.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.moolu.ai.llm/LlmCapabilities.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.moolu.ai.llm/LlmCapabilities> { // app.moolu.ai.llm/LlmCapabilities.$serializer|null[0]
+        final val descriptor // app.moolu.ai.llm/LlmCapabilities.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // app.moolu.ai.llm/LlmCapabilities.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.moolu.ai.llm/LlmCapabilities.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): app.moolu.ai.llm/LlmCapabilities // app.moolu.ai.llm/LlmCapabilities.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, app.moolu.ai.llm/LlmCapabilities) // app.moolu.ai.llm/LlmCapabilities.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.moolu.ai.llm.LlmCapabilities){}[0]
+    }
+
+    final object Companion { // app.moolu.ai.llm/LlmCapabilities.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<app.moolu.ai.llm/LlmCapabilities> // app.moolu.ai.llm/LlmCapabilities.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class app.moolu.ai.llm/Message { // app.moolu.ai.llm/Message|null[0]
+    constructor <init>(app.moolu.ai.llm/Message.Role, kotlin/String, kotlin/String? = ...) // app.moolu.ai.llm/Message.<init>|<init>(app.moolu.ai.llm.Message.Role;kotlin.String;kotlin.String?){}[0]
+
+    final val content // app.moolu.ai.llm/Message.content|{}content[0]
+        final fun <get-content>(): kotlin/String // app.moolu.ai.llm/Message.content.<get-content>|<get-content>(){}[0]
+    final val name // app.moolu.ai.llm/Message.name|{}name[0]
+        final fun <get-name>(): kotlin/String? // app.moolu.ai.llm/Message.name.<get-name>|<get-name>(){}[0]
+    final val role // app.moolu.ai.llm/Message.role|{}role[0]
+        final fun <get-role>(): app.moolu.ai.llm/Message.Role // app.moolu.ai.llm/Message.role.<get-role>|<get-role>(){}[0]
+
+    final fun component1(): app.moolu.ai.llm/Message.Role // app.moolu.ai.llm/Message.component1|component1(){}[0]
+    final fun component2(): kotlin/String // app.moolu.ai.llm/Message.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // app.moolu.ai.llm/Message.component3|component3(){}[0]
+    final fun copy(app.moolu.ai.llm/Message.Role = ..., kotlin/String = ..., kotlin/String? = ...): app.moolu.ai.llm/Message // app.moolu.ai.llm/Message.copy|copy(app.moolu.ai.llm.Message.Role;kotlin.String;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.llm/Message.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.moolu.ai.llm/Message.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.moolu.ai.llm/Message.toString|toString(){}[0]
+
+    final enum class Role : kotlin/Enum<app.moolu.ai.llm/Message.Role> { // app.moolu.ai.llm/Message.Role|null[0]
+        enum entry Assistant // app.moolu.ai.llm/Message.Role.Assistant|null[0]
+        enum entry System // app.moolu.ai.llm/Message.Role.System|null[0]
+        enum entry Tool // app.moolu.ai.llm/Message.Role.Tool|null[0]
+        enum entry User // app.moolu.ai.llm/Message.Role.User|null[0]
+
+        final val entries // app.moolu.ai.llm/Message.Role.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<app.moolu.ai.llm/Message.Role> // app.moolu.ai.llm/Message.Role.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun valueOf(kotlin/String): app.moolu.ai.llm/Message.Role // app.moolu.ai.llm/Message.Role.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<app.moolu.ai.llm/Message.Role> // app.moolu.ai.llm/Message.Role.values|values#static(){}[0]
+
+        final object Companion : kotlinx.serialization.internal/SerializerFactory { // app.moolu.ai.llm/Message.Role.Companion|null[0]
+            final fun serializer(): kotlinx.serialization/KSerializer<app.moolu.ai.llm/Message.Role> // app.moolu.ai.llm/Message.Role.Companion.serializer|serializer(){}[0]
+            final fun serializer(kotlin/Array<out kotlinx.serialization/KSerializer<*>>...): kotlinx.serialization/KSerializer<*> // app.moolu.ai.llm/Message.Role.Companion.serializer|serializer(kotlin.Array<out|kotlinx.serialization.KSerializer<*>>...){}[0]
+        }
+    }
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.moolu.ai.llm/Message> { // app.moolu.ai.llm/Message.$serializer|null[0]
+        final val descriptor // app.moolu.ai.llm/Message.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // app.moolu.ai.llm/Message.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.moolu.ai.llm/Message.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): app.moolu.ai.llm/Message // app.moolu.ai.llm/Message.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, app.moolu.ai.llm/Message) // app.moolu.ai.llm/Message.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.moolu.ai.llm.Message){}[0]
+    }
+
+    final object Companion { // app.moolu.ai.llm/Message.Companion|null[0]
+        final val $childSerializers // app.moolu.ai.llm/Message.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<app.moolu.ai.llm/Message> // app.moolu.ai.llm/Message.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class app.moolu.ai.llm/RemoteLlmProvider : app.moolu.ai.llm/LlmProvider { // app.moolu.ai.llm/RemoteLlmProvider|null[0]
+    constructor <init>(io.ktor.client/HttpClient, kotlin/String, app.moolu.foundation.time/MooluClock, app.moolu.foundation.logging/MooluLogger, app.moolu.ai.llm/AiEventReporter = ..., app.moolu.ai.llm/LlmCapabilities = ...) // app.moolu.ai.llm/RemoteLlmProvider.<init>|<init>(io.ktor.client.HttpClient;kotlin.String;app.moolu.foundation.time.MooluClock;app.moolu.foundation.logging.MooluLogger;app.moolu.ai.llm.AiEventReporter;app.moolu.ai.llm.LlmCapabilities){}[0]
+
+    final val capabilities // app.moolu.ai.llm/RemoteLlmProvider.capabilities|{}capabilities[0]
+        final fun <get-capabilities>(): app.moolu.ai.llm/LlmCapabilities // app.moolu.ai.llm/RemoteLlmProvider.capabilities.<get-capabilities>|<get-capabilities>(){}[0]
+
+    final fun stream(kotlin.collections/List<app.moolu.ai.llm/Message>, app.moolu.ai.llm/GenOptions): kotlinx.coroutines.flow/Flow<app.moolu.ai.llm/TokenChunk> // app.moolu.ai.llm/RemoteLlmProvider.stream|stream(kotlin.collections.List<app.moolu.ai.llm.Message>;app.moolu.ai.llm.GenOptions){}[0]
+    final suspend fun complete(kotlin.collections/List<app.moolu.ai.llm/Message>, app.moolu.ai.llm/GenOptions): app.moolu.ai.llm/Completion // app.moolu.ai.llm/RemoteLlmProvider.complete|complete(kotlin.collections.List<app.moolu.ai.llm.Message>;app.moolu.ai.llm.GenOptions){}[0]
+
+    final class RemoteLlmHttpException : kotlin/RuntimeException { // app.moolu.ai.llm/RemoteLlmProvider.RemoteLlmHttpException|null[0]
+        constructor <init>(io.ktor.http/HttpStatusCode, kotlin/String) // app.moolu.ai.llm/RemoteLlmProvider.RemoteLlmHttpException.<init>|<init>(io.ktor.http.HttpStatusCode;kotlin.String){}[0]
+
+        final val status // app.moolu.ai.llm/RemoteLlmProvider.RemoteLlmHttpException.status|{}status[0]
+            final fun <get-status>(): io.ktor.http/HttpStatusCode // app.moolu.ai.llm/RemoteLlmProvider.RemoteLlmHttpException.status.<get-status>|<get-status>(){}[0]
+    }
+
+    final object Companion { // app.moolu.ai.llm/RemoteLlmProvider.Companion|null[0]
+        final const val STREAM_FAILED_CODE // app.moolu.ai.llm/RemoteLlmProvider.Companion.STREAM_FAILED_CODE|{}STREAM_FAILED_CODE[0]
+            final fun <get-STREAM_FAILED_CODE>(): kotlin/String // app.moolu.ai.llm/RemoteLlmProvider.Companion.STREAM_FAILED_CODE.<get-STREAM_FAILED_CODE>|<get-STREAM_FAILED_CODE>(){}[0]
+    }
+}
+
+final class app.moolu.ai.llm/StubLlmProvider : app.moolu.ai.llm/LlmProvider { // app.moolu.ai.llm/StubLlmProvider|null[0]
+    constructor <init>(app.moolu.foundation.time/MooluClock, app.moolu.foundation.logging/MooluLogger, kotlin.collections/List<kotlin/String> = ..., kotlin/Long = ..., kotlin/Function1<kotlin.collections/List<kotlin/String>, kotlin/String> = ...) // app.moolu.ai.llm/StubLlmProvider.<init>|<init>(app.moolu.foundation.time.MooluClock;app.moolu.foundation.logging.MooluLogger;kotlin.collections.List<kotlin.String>;kotlin.Long;kotlin.Function1<kotlin.collections.List<kotlin.String>,kotlin.String>){}[0]
+
+    final val capabilities // app.moolu.ai.llm/StubLlmProvider.capabilities|{}capabilities[0]
+        final fun <get-capabilities>(): app.moolu.ai.llm/LlmCapabilities // app.moolu.ai.llm/StubLlmProvider.capabilities.<get-capabilities>|<get-capabilities>(){}[0]
+
+    final fun stream(kotlin.collections/List<app.moolu.ai.llm/Message>, app.moolu.ai.llm/GenOptions): kotlinx.coroutines.flow/Flow<app.moolu.ai.llm/TokenChunk> // app.moolu.ai.llm/StubLlmProvider.stream|stream(kotlin.collections.List<app.moolu.ai.llm.Message>;app.moolu.ai.llm.GenOptions){}[0]
+    final suspend fun complete(kotlin.collections/List<app.moolu.ai.llm/Message>, app.moolu.ai.llm/GenOptions): app.moolu.ai.llm/Completion // app.moolu.ai.llm/StubLlmProvider.complete|complete(kotlin.collections.List<app.moolu.ai.llm.Message>;app.moolu.ai.llm.GenOptions){}[0]
+
+    final object Companion { // app.moolu.ai.llm/StubLlmProvider.Companion|null[0]
+        final const val DEFAULT_TOKEN_DELAY_MILLIS // app.moolu.ai.llm/StubLlmProvider.Companion.DEFAULT_TOKEN_DELAY_MILLIS|{}DEFAULT_TOKEN_DELAY_MILLIS[0]
+            final fun <get-DEFAULT_TOKEN_DELAY_MILLIS>(): kotlin/Long // app.moolu.ai.llm/StubLlmProvider.Companion.DEFAULT_TOKEN_DELAY_MILLIS.<get-DEFAULT_TOKEN_DELAY_MILLIS>|<get-DEFAULT_TOKEN_DELAY_MILLIS>(){}[0]
+
+        final val DEFAULT_RESPONSES // app.moolu.ai.llm/StubLlmProvider.Companion.DEFAULT_RESPONSES|{}DEFAULT_RESPONSES[0]
+            final fun <get-DEFAULT_RESPONSES>(): kotlin.collections/List<kotlin/String> // app.moolu.ai.llm/StubLlmProvider.Companion.DEFAULT_RESPONSES.<get-DEFAULT_RESPONSES>|<get-DEFAULT_RESPONSES>(){}[0]
+
+        final fun ROUND_ROBIN_PICKER(): kotlin/Function1<kotlin.collections/List<kotlin/String>, kotlin/String> // app.moolu.ai.llm/StubLlmProvider.Companion.ROUND_ROBIN_PICKER|ROUND_ROBIN_PICKER(){}[0]
+    }
+}
+
+final class app.moolu.ai.llm/Usage { // app.moolu.ai.llm/Usage|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int, kotlin/Int) // app.moolu.ai.llm/Usage.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+
+    final val completionTokens // app.moolu.ai.llm/Usage.completionTokens|{}completionTokens[0]
+        final fun <get-completionTokens>(): kotlin/Int // app.moolu.ai.llm/Usage.completionTokens.<get-completionTokens>|<get-completionTokens>(){}[0]
+    final val promptTokens // app.moolu.ai.llm/Usage.promptTokens|{}promptTokens[0]
+        final fun <get-promptTokens>(): kotlin/Int // app.moolu.ai.llm/Usage.promptTokens.<get-promptTokens>|<get-promptTokens>(){}[0]
+    final val totalTokens // app.moolu.ai.llm/Usage.totalTokens|{}totalTokens[0]
+        final fun <get-totalTokens>(): kotlin/Int // app.moolu.ai.llm/Usage.totalTokens.<get-totalTokens>|<get-totalTokens>(){}[0]
+
+    final fun component1(): kotlin/Int // app.moolu.ai.llm/Usage.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // app.moolu.ai.llm/Usage.component2|component2(){}[0]
+    final fun component3(): kotlin/Int // app.moolu.ai.llm/Usage.component3|component3(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): app.moolu.ai.llm/Usage // app.moolu.ai.llm/Usage.copy|copy(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.llm/Usage.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.moolu.ai.llm/Usage.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.moolu.ai.llm/Usage.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.moolu.ai.llm/Usage> { // app.moolu.ai.llm/Usage.$serializer|null[0]
+        final val descriptor // app.moolu.ai.llm/Usage.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // app.moolu.ai.llm/Usage.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.moolu.ai.llm/Usage.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): app.moolu.ai.llm/Usage // app.moolu.ai.llm/Usage.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, app.moolu.ai.llm/Usage) // app.moolu.ai.llm/Usage.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.moolu.ai.llm.Usage){}[0]
+    }
+
+    final object Companion { // app.moolu.ai.llm/Usage.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<app.moolu.ai.llm/Usage> // app.moolu.ai.llm/Usage.Companion.serializer|serializer(){}[0]
+    }
+}
+
+sealed class app.moolu.ai.llm/TokenChunk { // app.moolu.ai.llm/TokenChunk|null[0]
+    final class Delta : app.moolu.ai.llm/TokenChunk { // app.moolu.ai.llm/TokenChunk.Delta|null[0]
+        constructor <init>(kotlin/String) // app.moolu.ai.llm/TokenChunk.Delta.<init>|<init>(kotlin.String){}[0]
+
+        final val text // app.moolu.ai.llm/TokenChunk.Delta.text|{}text[0]
+            final fun <get-text>(): kotlin/String // app.moolu.ai.llm/TokenChunk.Delta.text.<get-text>|<get-text>(){}[0]
+
+        final fun component1(): kotlin/String // app.moolu.ai.llm/TokenChunk.Delta.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): app.moolu.ai.llm/TokenChunk.Delta // app.moolu.ai.llm/TokenChunk.Delta.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.llm/TokenChunk.Delta.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.llm/TokenChunk.Delta.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.llm/TokenChunk.Delta.toString|toString(){}[0]
+    }
+
+    final class Error : app.moolu.ai.llm/TokenChunk { // app.moolu.ai.llm/TokenChunk.Error|null[0]
+        constructor <init>(kotlin/String, kotlin/String, kotlin/Boolean) // app.moolu.ai.llm/TokenChunk.Error.<init>|<init>(kotlin.String;kotlin.String;kotlin.Boolean){}[0]
+
+        final val code // app.moolu.ai.llm/TokenChunk.Error.code|{}code[0]
+            final fun <get-code>(): kotlin/String // app.moolu.ai.llm/TokenChunk.Error.code.<get-code>|<get-code>(){}[0]
+        final val message // app.moolu.ai.llm/TokenChunk.Error.message|{}message[0]
+            final fun <get-message>(): kotlin/String // app.moolu.ai.llm/TokenChunk.Error.message.<get-message>|<get-message>(){}[0]
+        final val recoverable // app.moolu.ai.llm/TokenChunk.Error.recoverable|{}recoverable[0]
+            final fun <get-recoverable>(): kotlin/Boolean // app.moolu.ai.llm/TokenChunk.Error.recoverable.<get-recoverable>|<get-recoverable>(){}[0]
+
+        final fun component1(): kotlin/String // app.moolu.ai.llm/TokenChunk.Error.component1|component1(){}[0]
+        final fun component2(): kotlin/String // app.moolu.ai.llm/TokenChunk.Error.component2|component2(){}[0]
+        final fun component3(): kotlin/Boolean // app.moolu.ai.llm/TokenChunk.Error.component3|component3(){}[0]
+        final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/Boolean = ...): app.moolu.ai.llm/TokenChunk.Error // app.moolu.ai.llm/TokenChunk.Error.copy|copy(kotlin.String;kotlin.String;kotlin.Boolean){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.llm/TokenChunk.Error.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.llm/TokenChunk.Error.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.llm/TokenChunk.Error.toString|toString(){}[0]
+    }
+
+    final class Finish : app.moolu.ai.llm/TokenChunk { // app.moolu.ai.llm/TokenChunk.Finish|null[0]
+        constructor <init>(app.moolu.ai.llm/FinishReason, app.moolu.ai.llm/Usage? = ...) // app.moolu.ai.llm/TokenChunk.Finish.<init>|<init>(app.moolu.ai.llm.FinishReason;app.moolu.ai.llm.Usage?){}[0]
+
+        final val reason // app.moolu.ai.llm/TokenChunk.Finish.reason|{}reason[0]
+            final fun <get-reason>(): app.moolu.ai.llm/FinishReason // app.moolu.ai.llm/TokenChunk.Finish.reason.<get-reason>|<get-reason>(){}[0]
+        final val usage // app.moolu.ai.llm/TokenChunk.Finish.usage|{}usage[0]
+            final fun <get-usage>(): app.moolu.ai.llm/Usage? // app.moolu.ai.llm/TokenChunk.Finish.usage.<get-usage>|<get-usage>(){}[0]
+
+        final fun component1(): app.moolu.ai.llm/FinishReason // app.moolu.ai.llm/TokenChunk.Finish.component1|component1(){}[0]
+        final fun component2(): app.moolu.ai.llm/Usage? // app.moolu.ai.llm/TokenChunk.Finish.component2|component2(){}[0]
+        final fun copy(app.moolu.ai.llm/FinishReason = ..., app.moolu.ai.llm/Usage? = ...): app.moolu.ai.llm/TokenChunk.Finish // app.moolu.ai.llm/TokenChunk.Finish.copy|copy(app.moolu.ai.llm.FinishReason;app.moolu.ai.llm.Usage?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.llm/TokenChunk.Finish.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.llm/TokenChunk.Finish.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.llm/TokenChunk.Finish.toString|toString(){}[0]
+    }
+
+    final class ReasoningDelta : app.moolu.ai.llm/TokenChunk { // app.moolu.ai.llm/TokenChunk.ReasoningDelta|null[0]
+        constructor <init>(kotlin/String) // app.moolu.ai.llm/TokenChunk.ReasoningDelta.<init>|<init>(kotlin.String){}[0]
+
+        final val text // app.moolu.ai.llm/TokenChunk.ReasoningDelta.text|{}text[0]
+            final fun <get-text>(): kotlin/String // app.moolu.ai.llm/TokenChunk.ReasoningDelta.text.<get-text>|<get-text>(){}[0]
+
+        final fun component1(): kotlin/String // app.moolu.ai.llm/TokenChunk.ReasoningDelta.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): app.moolu.ai.llm/TokenChunk.ReasoningDelta // app.moolu.ai.llm/TokenChunk.ReasoningDelta.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.llm/TokenChunk.ReasoningDelta.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.llm/TokenChunk.ReasoningDelta.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.llm/TokenChunk.ReasoningDelta.toString|toString(){}[0]
+    }
+
+    final object KeepAlive : app.moolu.ai.llm/TokenChunk { // app.moolu.ai.llm/TokenChunk.KeepAlive|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.llm/TokenChunk.KeepAlive.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.llm/TokenChunk.KeepAlive.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.llm/TokenChunk.KeepAlive.toString|toString(){}[0]
+    }
+}
