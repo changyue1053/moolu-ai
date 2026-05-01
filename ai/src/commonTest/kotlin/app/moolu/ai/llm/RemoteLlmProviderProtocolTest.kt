@@ -43,9 +43,10 @@ import kotlin.test.assertFailsWith
  * kotlinx-datetime are all multiplatform).
  */
 class RemoteLlmProviderProtocolTest {
-    private val baseUrl: String = "https://gateway.moolu.test"
+    private val baseUrl: String = "https://api.moolu.test"
     private val streamPath: String = "/v1/ai/chat"
     private val streamUrl: String = "$baseUrl$streamPath"
+    private val assistantId: String = "moolu_companion"
     private val clock = fakeClock(initialEpochMs = 1_700_000_000_000L)
     private val logger = FakeMooluLogger()
 
@@ -103,6 +104,7 @@ class RemoteLlmProviderProtocolTest {
                 RemoteLlmProvider(
                     httpClient = client,
                     baseUrl = baseUrl,
+                    assistantId = assistantId,
                     clock = clock,
                     logger = logger,
                     eventReporter = reporter,
@@ -141,7 +143,7 @@ class RemoteLlmProviderProtocolTest {
     fun init_rejects_blank_baseUrl() {
         val client = jsonMockClient { _ -> respond("{}") }
         assertFailsWith<IllegalArgumentException> {
-            RemoteLlmProvider(client, baseUrl = "", clock = clock, logger = logger)
+            RemoteLlmProvider(client, baseUrl = "", assistantId = assistantId, clock = clock, logger = logger)
         }
     }
 
@@ -149,7 +151,16 @@ class RemoteLlmProviderProtocolTest {
     fun init_rejects_baseUrl_with_trailing_slash() {
         val client = jsonMockClient { _ -> respond("{}") }
         assertFailsWith<IllegalArgumentException> {
-            RemoteLlmProvider(client, baseUrl = "https://x.test/", clock = clock, logger = logger)
+            RemoteLlmProvider(client, baseUrl = "https://x.test/", assistantId = assistantId, clock = clock, logger = logger)
+        }
+    }
+
+    @Test
+    fun init_rejects_blank_assistantId() {
+        // T12 plan-16 review C-CRIT-1 fix — plan-15 ChatRequest.assistant_id is binding:required
+        val client = jsonMockClient { _ -> respond("{}") }
+        assertFailsWith<IllegalArgumentException> {
+            RemoteLlmProvider(client, baseUrl = baseUrl, assistantId = "", clock = clock, logger = logger)
         }
     }
 
@@ -157,6 +168,7 @@ class RemoteLlmProviderProtocolTest {
         RemoteLlmProvider(
             httpClient = client,
             baseUrl = baseUrl,
+            assistantId = assistantId,
             clock = clock,
             logger = logger,
         )

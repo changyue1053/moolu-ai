@@ -49,7 +49,7 @@ jobs:
       - name: Architecture (Konsist PackageNamingTest)
         run: ./gradlew :architecture-test:test --no-daemon
 
-      - name: KMP allTests (Android + iosSimulatorArm64 + JVM 三平台 per ADR-base-002 TDD strict)
+      - name: KMP allTests (Android + iosSimulatorArm64 双平台 per ADR-base-002 TDD strict)
         run: ./gradlew :ai:allTests --no-daemon
 
       - name: ABI lock (apiCheck — binary-compat-validator gate per master plan §6.3 / ADR-base-019 §A1)
@@ -62,4 +62,3 @@ jobs:
           test -f ~/.m2/repository/app/moolu/moolu-ai-android/1.0.0-SNAPSHOT/moolu-ai-android-1.0.0-SNAPSHOT.aar
           test -d ~/.m2/repository/app/moolu/moolu-ai-iosarm64/1.0.0-SNAPSHOT  # plan-03 T5 regression guard + ERRATA #1
           test -d ~/.m2/repository/app/moolu/moolu-ai-iossimulatorarm64/1.0.0-SNAPSHOT
-          test -d ~/.m2/repository/app/moolu/moolu-ai-jvm/1.0.0-SNAPSHOT

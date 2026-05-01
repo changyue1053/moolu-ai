@@ -22,6 +22,8 @@ import io.ktor.http.isSuccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * Production [LlmProvider] that streams chat completions over SSE from
@@ -65,6 +67,12 @@ import kotlinx.coroutines.flow.flow
  *   ContentNegotiation + Bearer auth already installed)
  * @property baseUrl backend root, e.g. `https://api.moolu.app`
  *   (NOT AI Gateway 直连;is `moolu-app-server` per spec §5.6 + plan-15)
+ * @property assistantId LangGraph agent identifier for plan-15 server's
+ *   `ChatRequest.assistant_id` `binding:"required"` field (per
+ *   ADR-base-018 §B1 + T12 plan-16 review C-CRIT-1 fix). V0.5 single-app
+ *   `moolu_companion` per spec §8.5.1; V1+ multi-agent app may pass
+ *   `moolu_proactive` / `moolu_intent_recognizer` per plan-17 LangGraph
+ *   agents config.
  * @property clock used only for breadcrumb timestamps
  * @property logger debug-channel observability (no prompt content logged)
  * @property eventReporter Sentry-style hook for failure metadata; V0.5
@@ -76,6 +84,7 @@ import kotlinx.coroutines.flow.flow
 class RemoteLlmProvider(
     private val httpClient: HttpClient,
     private val baseUrl: String,
+    private val assistantId: String,
     private val clock: MooluClock,
     private val logger: MooluLogger,
     private val eventReporter: AiEventReporter = AiEventReporter.NoOp,
@@ -93,6 +102,9 @@ class RemoteLlmProvider(
         require(!baseUrl.endsWith('/')) {
             "baseUrl must not end with '/' (got '$baseUrl'); endpoint paths are appended verbatim"
         }
+        require(assistantId.isNotBlank()) {
+            "assistantId must not be blank (plan-15 ChatRequest.assistant_id is binding:required)"
+        }
     }
 
     private val streamEndpoint: String get() = "$baseUrl$STREAM_PATH"
@@ -102,9 +114,9 @@ class RemoteLlmProvider(
         opts: GenOptions,
     ): Flow<TokenChunk> =
         flow {
-            val payload = OpenAiJson.encodeToString(opts.toRequest(messages, stream = true))
+            val payload = OpenAiJson.encodeToString(opts.toRequest(messages, stream = true, assistantId = assistantId))
             logger.debug(
-                "stream() POST $streamEndpoint model=${opts.model} messages=${messages.size} startedAt=${clock.now()}",
+                "stream() POST $streamEndpoint assistantId=$assistantId messages=${messages.size} startedAt=${clock.now()}",
             )
             httpClient.sse(
                 urlString = streamEndpoint,
@@ -118,7 +130,7 @@ class RemoteLlmProvider(
             ) {
                 val outcome = SseEventOutcome()
                 incoming.collect { event ->
-                    val frames = parseSseEventData(event.data, logger, outcome)
+                    val frames = parseStreamEvent(event.event, event.data, logger, outcome)
                     frames.forEach { emit(it) }
                 }
                 if (!outcome.terminated) {
@@ -126,11 +138,17 @@ class RemoteLlmProvider(
                 }
             }
         }.catch { t ->
-            eventReporter.captureLlmError(t, streamEndpoint, opts.model)
+            // Note: kotlinx Flow.catch does NOT catch CancellationException
+            // (per kotlinx-coroutines docs) — cancellation propagates without
+            // being mapped to TokenChunk.Error or reaching eventReporter.
+            // Static phrase preserves the privacy invariant — t.message can
+            // contain upstream/framing detail (T12 review S-M2). Pass null
+            // model to avoid potentially-secret opts.model in reporter (S-L1).
+            eventReporter.captureLlmError(t, streamEndpoint, model = null)
             emit(
                 TokenChunk.Error(
                     code = STREAM_FAILED_CODE,
-                    message = t.message ?: "Unknown SSE failure",
+                    message = "Stream failed",
                     recoverable = true,
                 ),
             )
@@ -140,9 +158,9 @@ class RemoteLlmProvider(
         messages: List<Message>,
         opts: GenOptions,
     ): Completion {
-        val payload = OpenAiJson.encodeToString(opts.toRequest(messages, stream = false))
+        val payload = OpenAiJson.encodeToString(opts.toRequest(messages, stream = false, assistantId = assistantId))
         logger.debug(
-            "complete() POST $streamEndpoint model=${opts.model} messages=${messages.size} startedAt=${clock.now()}",
+            "complete() POST $streamEndpoint assistantId=$assistantId messages=${messages.size} startedAt=${clock.now()}",
         )
         return runCatching {
             val response: HttpResponse =
@@ -171,7 +189,10 @@ class RemoteLlmProvider(
                 usage = parsed.usage?.toDomainUsage(),
             )
         }.onFailure { t ->
-            eventReporter.captureLlmError(t, streamEndpoint, opts.model)
+            // Static null model — model field is V1+ forward-compat (per ADR-019 §A1
+            // 米鹿 baseline forward-compat) but not used by plan-15 server binding.
+            // Avoids passing potentially-secret opts.model to reporter (T12 review S-L1).
+            eventReporter.captureLlmError(t, streamEndpoint, model = null)
         }.getOrThrow()
     }
 
@@ -208,6 +229,56 @@ class RemoteLlmProvider(
 internal class SseEventOutcome(
     var terminated: Boolean = false,
 )
+
+/**
+ * Top-level SSE event dispatcher: routes by `eventName` first, then
+ * delegates to [parseSseEventData] for default `message` / null-name
+ * events. Added in T12 plan-16 review C-H1 fix to handle
+ * `event: error` SSE frames from `moolu-app-server` `/v1/ai/chat`
+ * (per ADR-base-018 §B1 + plan-15 ai.go line 133 `c.SSEvent("error", ...)`).
+ *
+ * Behaviour:
+ *  - `eventName == "error"` → 1 [TokenChunk.Error] with parsed message,
+ *    `outcome.terminated = true` (no further frames expected;server
+ *    closed connection)
+ *  - else → delegate to [parseSseEventData] (米鹿 baseline pure parser)
+ */
+internal fun parseStreamEvent(
+    eventName: String?,
+    data: String?,
+    logger: MooluLogger,
+    outcome: SseEventOutcome,
+): List<TokenChunk> {
+    if (eventName == "error") {
+        outcome.terminated = true
+        val msg = parseErrorEventMessage(data) ?: "upstream stream error"
+        return listOf(
+            TokenChunk.Error(
+                code = RemoteLlmProvider.STREAM_FAILED_CODE,
+                message = msg,
+                recoverable = true,
+            ),
+        )
+    }
+    return parseSseEventData(data, logger, outcome)
+}
+
+/**
+ * Parse `{"error":{"message":"..."}}` payload from server-emitted
+ * `event: error` SSE frame (per ADR-base-018 §C1 translator + ai.go
+ * end-of-stream emission). Returns null if data is null/blank/garbage.
+ */
+internal fun parseErrorEventMessage(data: String?): String? {
+    if (data.isNullOrBlank()) return null
+    return runCatching {
+        val root = OpenAiJson.parseToJsonElement(data).jsonObject
+        root["error"]
+            ?.jsonObject
+            ?.get("message")
+            ?.jsonPrimitive
+            ?.content
+    }.getOrNull()
+}
 
 /**
  * Pure mapping from one SSE `data:` payload to zero-or-more

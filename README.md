@@ -32,6 +32,8 @@ GAV: `app.moolu:moolu-ai:1.0.0-SNAPSHOT`(Maven Local pre-V1.0 per ADR-base-004)�
 // composition root (consumer SDK / app — plan-29 米鹿 V0.5 cutover OR plan-31 demo)
 import app.moolu.ai.llm.RemoteLlmProvider
 import app.moolu.ai.llm.LlmProvider
+import app.moolu.foundation.logging.mooluLogger
+import app.moolu.foundation.time.DefaultClock
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.sse.SSE
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -45,18 +47,23 @@ val httpClient = HttpClient(/* OkHttp on Android, Darwin on iOS */) {
     install(ContentNegotiation) { json() }
     install(Auth) {
         bearer {
-            // moolu-account.OidcClient.currentTokens 链 (5th BearerTokenProvider reuse)
-            loadTokens { BearerTokens(tokenStorage.access, tokenStorage.refresh) }
-            refreshTokens { /* moolu-account.OidcClient.refresh() ... */ }
+            // moolu-account.OidcClient + TokenStorage (5th BearerTokenProvider reuse per ADR-base-019 §C1)
+            loadTokens {
+                val access = tokenStorage.loadAccessToken().orEmpty()
+                val refresh = tokenStorage.loadRefreshToken().orEmpty()
+                if (access.isNotBlank()) BearerTokens(access, refresh) else null
+            }
+            refreshTokens { /* oidcClient.refresh() …→ tokenStorage.save(...);loadTokens() again */ }
         }
     }
 }
 
 val llmProvider: LlmProvider = RemoteLlmProvider(
     httpClient = httpClient,
-    baseUrl = "https://api.moolu.app",  // moolu-app-server prod (NOT AI Gateway 直连)
-    clock = MooluClock.System,
-    logger = MooluLogger.tagged("ai"),
+    baseUrl = "https://api.moolu.app",   // moolu-app-server prod (NOT AI Gateway 直连)
+    assistantId = "moolu_companion",     // plan-15 ChatRequest.assistant_id binding:"required" (per ADR-base-018 §B1 + plan-17 LangGraph agent ID)
+    clock = DefaultClock,
+    logger = mooluLogger("ai"),
     // eventReporter = SentryAiEventReporter(...)  // plan-21 wire
 )
 
@@ -81,7 +88,7 @@ llmProvider.stream(
 测试 / 离线 fallback:
 
 ```kotlin
-val stub: LlmProvider = StubLlmProvider(MooluClock.System, MooluLogger.tagged("ai-stub"))
+val stub: LlmProvider = StubLlmProvider(DefaultClock, mooluLogger("ai-stub"))
 // 默认 8 中文 canned + round-robin (米鹿 baseline 行为)
 ```
 
@@ -97,17 +104,26 @@ val stub: LlmProvider = StubLlmProvider(MooluClock.System, MooluLogger.tagged("a
 
 ## 协议契约
 
-`RemoteLlmProvider.parseSseEventData()` 输入必须 1:1 match `moolu-app-server` `internal/ai/translator.go` `Translate()` 输出格式。13 case `RemoteLlmProviderParserTest` 自动 enforce 此 contract。改 server-side translator 时必同步 client SDK + bump major(per ADR-base-019 §F1)。
+**Inbound** (`POST /v1/ai/chat` body): `RemoteLlmProvider` sends `internal.ChatRequest` matching plan-15 server's `internal/api/ai.go` `ChatRequest` struct (per ADR-base-018 §B1 + ADR-base-019 §A1):
+- `assistant_id` `binding:"required"`(SDK ctor param,e.g. `"moolu_companion"` per plan-17 agents)
+- `thread_id` optional(V1+ thread continuity via `GenOptions.threadId`)
+- `messages` `binding:"required"` 数组
+
+**Outbound** (SSE): `parseStreamEvent(eventName, data, ...)` 路由:
+- `event: error` → `TokenChunk.Error`(parse `{"error":{"message":"..."}}`)
+- `event: message` / `null` → `parseSseEventData(data, ...)` pure func(13+ case parser test enforces wire-protocol contract)
+
+输入必须 1:1 match `moolu-app-server` `internal/ai/translator.go` `Translate()` 输出格式。**16 case `RemoteLlmProviderParserTest`**(12 米鹿 baseline verbatim + 4 NEW for parseStreamEvent dispatcher)自动 enforce 此 contract。改 server-side translator 时必同步 client SDK + bump major(per ADR-base-019 §F1)。
 
 ## CI
 
 | job | 命令 | gate |
 | --- | --- | --- |
 | ktlintCheck | `./gradlew ktlintCheck --no-daemon` | format gate |
-| Konsist architecture | `./gradlew :architecture-test:test --no-daemon` | package boundary |
-| KMP allTests(Android + iosSimulatorArm64 + jvm)| `./gradlew :ai:allTests --no-daemon` | per ADR-base-002 TDD strict |
+| Konsist architecture | `./gradlew :architecture-test:test --no-daemon` | package boundary (`app.moolu.ai.*`) |
+| KMP allTests(Android + iosSimulatorArm64)| `./gradlew :ai:allTests --no-daemon` | per ADR-base-002 TDD strict |
 | ABI lock(apiCheck)| `./gradlew :ai:apiCheck --no-daemon` | binary-compat-validator KLIB ABI gate per master plan §6.3 |
-| publishToMavenLocal | `./gradlew :ai:publishToMavenLocal --no-daemon` | 5 artifact prefix-only verify per ERRATA #1 |
+| publishToMavenLocal | `./gradlew :ai:publishToMavenLocal --no-daemon` | 4 artifact prefix-only verify per ERRATA #1 |
 
 ## 构建
 

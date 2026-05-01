@@ -19,7 +19,9 @@ import kotlin.test.Test
  * major bump (per ADR-base-019 §F1).
  *
  * Plan-16 §T6 (verbatim port from 米鹿 core-ai GatewayLlmParserTest;
- * class rename only — 13 cases identical).
+ * class rename only — 12 cases identical) + §T12 plan-16 review C-H1
+ * fix (4 NEW cases for parseStreamEvent dispatcher: error event name +
+ * garbage error data + message name + null name delegate to data parser).
  */
 class RemoteLlmProviderParserTest {
     private val logger = FakeMooluLogger()
@@ -138,7 +140,6 @@ class RemoteLlmProviderParserTest {
 
     @Test
     fun finish_reason_aliases_map_correctly() {
-        val outcome = SseEventOutcome()
         listOf(
             "stop" to FinishReason.Stop,
             "length" to FinishReason.Length,
@@ -146,9 +147,81 @@ class RemoteLlmProviderParserTest {
             "function_call" to FinishReason.ToolCall,
             "content_filter" to FinishReason.ContentFilter,
         ).forEach { (raw, expected) ->
+            // Per-iteration outcome (T12 review C-M2 fix — was reusing single SseEventOutcome
+            // which carries `terminated=true` across iterations and assertions still pass but
+            // smell;each alias should start fresh)
+            val outcome = SseEventOutcome()
             val frames = parseSseEventData(chunk(finishReason = raw), logger, outcome)
             (frames.last() as TokenChunk.Finish).reason shouldBe expected
         }
+    }
+
+    // ─── parseStreamEvent dispatcher (T12 review C-H1 fix) ─────────────────────
+
+    @Test
+    fun stream_event_with_error_name_emits_token_chunk_error_with_parsed_message() {
+        // Server-side moolu-app-server `internal/api/ai.go` line 133 emits:
+        //   c.SSEvent("error", `{"error":{"message":"upstream_failed"}}`)
+        // (per ADR-base-018 §B1 + §C1 translator end-of-stream behavior)
+        val outcome = SseEventOutcome()
+        val frames =
+            parseStreamEvent(
+                eventName = "error",
+                data = """{"error":{"message":"upstream_failed"}}""",
+                logger = logger,
+                outcome = outcome,
+            )
+        frames shouldHaveSize 1
+        val err = frames[0] as TokenChunk.Error
+        err.code shouldBe RemoteLlmProvider.STREAM_FAILED_CODE
+        err.message shouldBe "upstream_failed"
+        err.recoverable shouldBe true
+        outcome.terminated shouldBe true
+    }
+
+    @Test
+    fun stream_event_with_error_name_falls_back_to_generic_message_on_garbage_data() {
+        val outcome = SseEventOutcome()
+        val frames =
+            parseStreamEvent(
+                eventName = "error",
+                data = "not-json",
+                logger = logger,
+                outcome = outcome,
+            )
+        frames shouldHaveSize 1
+        val err = frames[0] as TokenChunk.Error
+        err.message shouldBe "upstream stream error"
+        outcome.terminated shouldBe true
+    }
+
+    @Test
+    fun stream_event_with_message_name_delegates_to_data_parser() {
+        val outcome = SseEventOutcome()
+        val frames =
+            parseStreamEvent(
+                eventName = "message",
+                data = chunk(content = "ok"),
+                logger = logger,
+                outcome = outcome,
+            )
+        frames shouldHaveSize 1
+        (frames[0] as TokenChunk.Delta).text shouldBe "ok"
+    }
+
+    @Test
+    fun stream_event_with_null_name_delegates_to_data_parser() {
+        val outcome = SseEventOutcome()
+        val frames =
+            parseStreamEvent(
+                eventName = null,
+                data = "[DONE]",
+                logger = logger,
+                outcome = outcome,
+            )
+        frames shouldHaveSize 1
+        (frames[0] as TokenChunk.Finish).reason shouldBe FinishReason.Stop
+        outcome.terminated shouldBe true
     }
 
     private fun chunk(

@@ -191,7 +191,7 @@ final class app.moolu.ai.llm/Message { // app.moolu.ai.llm/Message|null[0]
 }
 
 final class app.moolu.ai.llm/RemoteLlmProvider : app.moolu.ai.llm/LlmProvider { // app.moolu.ai.llm/RemoteLlmProvider|null[0]
-    constructor <init>(io.ktor.client/HttpClient, kotlin/String, app.moolu.foundation.time/MooluClock, app.moolu.foundation.logging/MooluLogger, app.moolu.ai.llm/AiEventReporter = ..., app.moolu.ai.llm/LlmCapabilities = ...) // app.moolu.ai.llm/RemoteLlmProvider.<init>|<init>(io.ktor.client.HttpClient;kotlin.String;app.moolu.foundation.time.MooluClock;app.moolu.foundation.logging.MooluLogger;app.moolu.ai.llm.AiEventReporter;app.moolu.ai.llm.LlmCapabilities){}[0]
+    constructor <init>(io.ktor.client/HttpClient, kotlin/String, kotlin/String, app.moolu.foundation.time/MooluClock, app.moolu.foundation.logging/MooluLogger, app.moolu.ai.llm/AiEventReporter = ..., app.moolu.ai.llm/LlmCapabilities = ...) // app.moolu.ai.llm/RemoteLlmProvider.<init>|<init>(io.ktor.client.HttpClient;kotlin.String;kotlin.String;app.moolu.foundation.time.MooluClock;app.moolu.foundation.logging.MooluLogger;app.moolu.ai.llm.AiEventReporter;app.moolu.ai.llm.LlmCapabilities){}[0]
 
     final val capabilities // app.moolu.ai.llm/RemoteLlmProvider.capabilities|{}capabilities[0]
         final fun <get-capabilities>(): app.moolu.ai.llm/LlmCapabilities // app.moolu.ai.llm/RemoteLlmProvider.capabilities.<get-capabilities>|<get-capabilities>(){}[0]
