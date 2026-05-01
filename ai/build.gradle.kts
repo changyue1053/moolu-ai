@@ -29,9 +29,13 @@ kotlin {
         }
     }
 
-    // jvm() target for JVM tests (RemoteLlmProviderJvmTest MockEngine ctor validation
-    // + non-stream `complete` tests; same pattern as 米鹿 core-ai per spec §1.1 row G).
-    jvm()
+    // NOTE: 0 jvm() target — moolu-foundation 1.0.1 + moolu-network 1.0.0 are published
+    // from mavenLocal with android-jvm + iOS variants only (no pure JVM variant). Adding
+    // jvm() here breaks transitive dep resolution. Tests run in commonTest (shared between
+    // androidHostTest + iosSimulatorArm64Test runs) — same pattern as moolu-im / moolu-account.
+    // Per ADR-base-019 §F1 — RemoteLlmProviderJvmTest renamed to RemoteLlmProviderProtocolTest
+    // and moved from jvmTest → commonTest (Ktor MockEngine + kotest-assertions + kotlinx-datetime
+    // are all multiplatform).
 
     sourceSets {
         commonMain.dependencies {
@@ -116,7 +120,6 @@ afterEvaluate {
                     "androidRelease" -> "moolu-ai-android"
                     "iosArm64" -> "moolu-ai-iosarm64"
                     "iosSimulatorArm64" -> "moolu-ai-iossimulatorarm64"
-                    "jvm" -> "moolu-ai-jvm"
                     else -> artifactId
                 }
             artifactId = original
