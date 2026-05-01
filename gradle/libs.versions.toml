@@ -1,0 +1,71 @@
+[versions]
+# 验证基线 = plan-14 catalog (moolu-account ship) + plan-10 binary-compat-validator (per ADR-base-019 §1)
+# Per ADR-base-001 §5.6 1-week stale tolerance: 全 STAY (plan-15 ship 2026-05-01 = today).
+kotlin = "2.3.21"
+agp = "9.1.1"
+gradle = "9.4.1"
+java = "21"
+
+# Coroutines / Serialization / Datetime
+coroutines = "1.10.1"
+serialization = "1.11.0"
+datetime = "0.7.1"
+
+# Logging (foundation 已用)
+kermit = "2.1.0"
+
+# Android SDK
+android-compile-sdk = "36"
+android-min-sdk = "26"
+
+# Testing
+kotest = "6.1.11"
+konsist = "0.17.3"
+
+# Lint
+ktlint-gradle = "14.2.0"
+
+# ABI lock (per master plan §6.3 / plan-10 ship)
+binary-compat-validator = "0.18.1"
+
+# Moolu base SDK (plan-16 deps: foundation + network — BearerTokenProvider 5th cross-SDK reuse per ADR-019 §C1)
+moolu-foundation = "1.0.1-SNAPSHOT"
+moolu-network = "1.0.0-SNAPSHOT"
+
+# Ktor (SSE + ContentNegotiation; same 3.4.x as moolu-account plan-14 STAY per ADR-019 §1)
+ktor = "3.4.3"
+
+[libraries]
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
+
+# Moolu base SDK
+moolu-foundation = { module = "app.moolu:moolu-foundation", version.ref = "moolu-foundation" }
+moolu-network = { module = "app.moolu:moolu-network", version.ref = "moolu-network" }
+
+# Ktor (SSE built-in via ktor-client-core 3.4.x; ContentNegotiation for non-stream complete; mock for tests)
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+
+# Plugin gradle artifacts (legacy — 不再 includeBuild build-logic, settings 直接 plugins block 消费)
+android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-serialization-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+
+# Testing
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
+konsist = { module = "com.lemonappdev:konsist", version.ref = "konsist" }
+
+[plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
+binary-compat-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binary-compat-validator" }

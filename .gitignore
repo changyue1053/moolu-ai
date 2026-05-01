@@ -1,0 +1,39 @@
+# Gradle
+.gradle/
+build/
+**/build/
+gradle-app.setting
+.gradletasknamecache
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+.kotlin/
+
+# Android
+local.properties
+captures/
+output.json
+
+# iOS / xcodegen / xcodebuild
+iosApp.xcodeproj/
+DerivedData/
+*.xcuserdatad/
+
+# Build outputs
+*.apk
+*.aab
+*.aar
+*.ipa
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vault / Secrets
+*.secret
+*.pem
+*.key
+
+# Test reports (commit only when needed)
+test-results/
