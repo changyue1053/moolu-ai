@@ -2,9 +2,15 @@ name: pr-check
 on:
   pull_request:
     branches: [main]
-  push:
-    branches: [main]
   workflow_dispatch: {}
+# NOTE: NO `push:` trigger — matches moolu-im / moolu-account / other base SDK repos
+# pattern (per master plan §1.3 + plan-10/14/15 直推 main 节奏);CI is informational
+# gate for PRs not direct pushes. Pre-V1.0 SNAPSHOT direct-to-main 不 gate by CI;
+# local `./gradlew ktlintCheck :ai:apiCheck :architecture-test:test :ai:allTests
+# :ai:publishToMavenLocal --no-daemon` is the ship gate. Plus GITHUB_TOKEN default
+# permissions don't allow cross-private-repo clone (moolu-build-logic / foundation /
+# network are private) — would need MOOLU_BOOTSTRAP_PAT secret which is user-setup
+# concern (plan-32 polish backlog).
 
 jobs:
   build:
