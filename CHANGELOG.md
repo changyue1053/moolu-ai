@@ -4,7 +4,14 @@ All notable changes to `moolu-ai` will be documented here.
 Format mostly follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versions follow SemVer post-V1.0;pre-V1.0 ships as `1.0.0-SNAPSHOT` per ADR-base-004。
 
-## [Unreleased] — plan-16 ship
+## [Unreleased]
+
+### Added (plan-32)
+- vanniktech/gradle-maven-publish-plugin 0.36.0 集成 via convention plugin (plan-32 T1) — Maven Central preview SOP
+- Konsist 4-rule sibling baseline verified at plan-32 T2 — D4 backfill 3 NEW rules
+  (CommonMainOnlyTest + PlatformBridgeTest + SubPackageBoundaryTest) close uneven coverage drift
+
+## [1.0.0-SNAPSHOT] — plan-16 ship
 
 ### Added
 - **`LlmProvider` interface**(`commonMain/llm/LlmProvider.kt`)— 单一客户端 LLM 抽象;`stream(messages, opts) → Flow<TokenChunk>` + `complete(messages, opts) → Completion` + `capabilities`(米鹿 core-ai baseline verbatim port + 包名 `com.moolu.ai.llm` → `app.moolu.ai.llm`)
