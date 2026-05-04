@@ -6,10 +6,26 @@ Versions follow SemVer post-V1.0;pre-V1.0 ships as `1.0.0-SNAPSHOT` per ADR-base
 
 ## [Unreleased]
 
-### Added (plan-32)
-- vanniktech/gradle-maven-publish-plugin 0.36.0 集成 via convention plugin (plan-32 T1) — Maven Central preview SOP
-- Konsist 4-rule sibling baseline verified at plan-32 T2 — D4 backfill 3 NEW rules
-  (CommonMainOnlyTest + PlatformBridgeTest + SubPackageBoundaryTest) close uneven coverage drift
+## [1.0.0] - 2026-05-04 — base V1.0 release publish 历史里程碑
+
+### Changed (plan-34 T1 per ADR-base-028 §D1)
+- Bump version `1.0.x-SNAPSHOT` → `1.0.0` stable (skip §E1 V0.5.0-SNAPSHOT retroactive — Sonatype 不允许 SNAPSHOT promotion;Spring Boot V1.0.0 same pattern direct from 1.0.x-SNAPSHOT to 1.0.0 stable)
+- Update cross-SDK version refs in `gradle/libs.versions.toml` + `README.md` GAV examples + `.github/workflows/pr-check.yml` hardcoded mavenLocal verification paths to V1.0.0 stable
+- Files preserved (historical context): CHANGELOG.md historical entries + `settings.gradle.kts` moolu-build-logic plugin ID (`1.0.0-SNAPSHOT` internal infra) + code comments / JavaDoc examples mentioning version history + any moolu-build-logic / kmp-library bootstrap refs in pr-check.yml
+
+### Added (plan-32 T1 per ADR-base-027 §A1 — historical context preserved at V1.0.0)
+- vanniktech/gradle-maven-publish-plugin 0.36.0 集成 via convention plugin — Maven Central preview SOP (V0.5 plugin DSL config validation + 真 staging plan-34 T5 per ADR-027 §A1)
+
+### Added (plan-32 T2 per ADR-base-027 §B1 — historical context preserved at V1.0.0)
+- Konsist 4-rule baseline verified at plan-32 T2 audit (close uneven coverage drift D4 per ADR-027 §B1)
+
+### Added (plan-34 T3 per ADR-base-028 §H1)
+- Konsist rule-count gate (backslide guard) in `.github/workflows/pr-check.yml` — `assert count >= baseline` (4) right after `:architecture-test:test` step;BACKSLIDE catch immediate per-repo;industry pattern (Spring Boot CheckStyle baseline + Compose Lint baseline)
+
+### Released
+- Maven artifact `app.moolu:moolu-ai:1.0.0` — production-stable V1.0.0 first release (per ADR-base-028 §A1 + plan-34 T5 真 staging via vanniktech `publishAndReleaseToMavenCentral` IF Sonatype OSSRH credentials provisioned at T-staging time;ELSE Path B fallback per ADR-base-028 §A graceful fallback pattern)
+
+[1.0.0]: https://github.com/changyue1053/moolu-ai/releases/tag/v1.0.0
 
 ## [1.0.0-SNAPSHOT] — plan-16 ship
 
