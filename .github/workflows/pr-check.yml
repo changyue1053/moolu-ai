@@ -55,6 +55,18 @@ jobs:
       - name: Architecture (Konsist PackageNamingTest)
         run: ./gradlew :architecture-test:test --no-daemon
 
+      - name: Konsist rule-count gate (backslide guard per ADR-base-028 §H1)
+        run: |
+          count=$(grep -rE '^\s*@Test' architecture-test/ --include='*.kt' | wc -l | xargs)
+          baseline=4   # plan-34 T3 baseline per master plan §7.1 退出门 Konsist 30+ rules
+          echo "Konsist rule-count: $count (baseline: $baseline)"
+          if [ "$count" -lt "$baseline" ]; then
+            echo "❌ BACKSLIDE: Konsist rules ($count) < baseline ($baseline)"
+            echo "Per ADR-base-028 §H1 — rules must not regress below baseline."
+            exit 1
+          fi
+          echo "✅ Konsist rule-count gate PASS"
+
       - name: KMP allTests (Android + iosSimulatorArm64 双平台 per ADR-base-002 TDD strict)
         run: ./gradlew :ai:allTests --no-daemon
 
