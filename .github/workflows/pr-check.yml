@@ -25,29 +25,29 @@ jobs:
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Bootstrap moolu-build-logic 1.0.0-SNAPSHOT to mavenLocal
+      - name: Bootstrap moolu-build-logic 1.0.0 to mavenLocal
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git clone "https://x-access-token:$GH_TOKEN@github.com/changyue1053/moolu-build-logic.git" /tmp/moolu-build-logic
           (cd /tmp/moolu-build-logic && ./gradlew :convention:publishToMavenLocal --no-daemon)
-          test -f ~/.m2/repository/moolu/kmp/library/moolu.kmp.library.gradle.plugin/1.0.0-SNAPSHOT/moolu.kmp.library.gradle.plugin-1.0.0-SNAPSHOT.pom
+          test -f ~/.m2/repository/moolu/kmp/library/moolu.kmp.library.gradle.plugin/1.0.0/moolu.kmp.library.gradle.plugin-1.0.0.pom
 
-      - name: Bootstrap moolu-foundation 1.0.1-SNAPSHOT to mavenLocal
+      - name: Bootstrap moolu-foundation 1.0.0 to mavenLocal
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git clone "https://x-access-token:$GH_TOKEN@github.com/changyue1053/moolu-foundation.git" /tmp/moolu-foundation
           (cd /tmp/moolu-foundation && ./gradlew :foundation:publishToMavenLocal --no-daemon)
-          test -d ~/.m2/repository/app/moolu/moolu-foundation-iosarm64/1.0.1-SNAPSHOT  # plan-03 T5 regression guard
+          test -d ~/.m2/repository/app/moolu/moolu-foundation-iosarm64/1.0.0  # plan-03 T5 regression guard
 
-      - name: Bootstrap moolu-network 1.0.0-SNAPSHOT to mavenLocal
+      - name: Bootstrap moolu-network 1.0.0 to mavenLocal
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git clone "https://x-access-token:$GH_TOKEN@github.com/changyue1053/moolu-network.git" /tmp/moolu-network
           (cd /tmp/moolu-network && ./gradlew :network:publishToMavenLocal --no-daemon)
-          test -d ~/.m2/repository/app/moolu/moolu-network-iosarm64/1.0.0-SNAPSHOT  # plan-03 T5 regression guard
+          test -d ~/.m2/repository/app/moolu/moolu-network-iosarm64/1.0.0  # plan-03 T5 regression guard
 
       - name: ktlintCheck
         run: ./gradlew ktlintCheck --no-daemon
@@ -64,7 +64,7 @@ jobs:
       - name: publishToMavenLocal + verify artifacts (含 plan-03 T5 iOS regression guard + ERRATA #1 prefix-only fix)
         run: |
           ./gradlew :ai:publishToMavenLocal --no-daemon
-          test -f ~/.m2/repository/app/moolu/moolu-ai/1.0.0-SNAPSHOT/moolu-ai-1.0.0-SNAPSHOT.module
-          test -f ~/.m2/repository/app/moolu/moolu-ai-android/1.0.0-SNAPSHOT/moolu-ai-android-1.0.0-SNAPSHOT.aar
-          test -d ~/.m2/repository/app/moolu/moolu-ai-iosarm64/1.0.0-SNAPSHOT  # plan-03 T5 regression guard + ERRATA #1
-          test -d ~/.m2/repository/app/moolu/moolu-ai-iossimulatorarm64/1.0.0-SNAPSHOT
+          test -f ~/.m2/repository/app/moolu/moolu-ai/1.0.0/moolu-ai-1.0.0.module
+          test -f ~/.m2/repository/app/moolu/moolu-ai-android/1.0.0/moolu-ai-android-1.0.0.aar
+          test -d ~/.m2/repository/app/moolu/moolu-ai-iosarm64/1.0.0  # plan-03 T5 regression guard + ERRATA #1
+          test -d ~/.m2/repository/app/moolu/moolu-ai-iossimulatorarm64/1.0.0

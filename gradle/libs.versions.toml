@@ -29,8 +29,8 @@ ktlint-gradle = "14.2.0"
 binary-compat-validator = "0.18.1"
 
 # Moolu base SDK (plan-16 deps: foundation + network — BearerTokenProvider 5th cross-SDK reuse per ADR-019 §C1)
-moolu-foundation = "1.0.1-SNAPSHOT"
-moolu-network = "1.0.0-SNAPSHOT"
+moolu-foundation = "1.0.0"
+moolu-network = "1.0.0"
 
 # Ktor (SSE + ContentNegotiation; same 3.4.x as moolu-account plan-14 STAY per ADR-019 §1)
 ktor = "3.4.3"

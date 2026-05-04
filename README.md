@@ -2,7 +2,7 @@
 
 Base AI SDK for the moolu platform — KMP `commonMain` `LlmProvider` abstraction + `RemoteLlmProvider`(OpenAI-compat SSE consumer of `moolu-app-server` `/v1/ai/chat` per [ADR-base-018](https://github.com/changyue1053/moolu-platform-meta/blob/main/docs/adr/0018-moolu-app-server-business.md) + plan-15)+ `StubLlmProvider`(offline / pre-backend fallback)。米鹿 `core-ai` 直迁 part per [architecture spec §8.5.1](https://github.com/changyue1053/moolu-platform-meta/blob/main/docs/specs/2026-04-29-im-ai-platform-architecture-design.md)。
 
-GAV: `app.moolu:moolu-ai:1.0.0-SNAPSHOT`(Maven Local pre-V1.0 per ADR-base-004)。
+GAV: `app.moolu:moolu-ai:1.0.0`(Maven Local pre-V1.0 per ADR-base-004)。
 
 ## 功能(plan-16 ship — V0.5)
 
@@ -18,8 +18,8 @@ GAV: `app.moolu:moolu-ai:1.0.0-SNAPSHOT`(Maven Local pre-V1.0 per ADR-base-004)�
 
 ## 依赖
 
-- `app.moolu:moolu-foundation:1.0.1-SNAPSHOT`(`MooluClock` + `MooluLogger` interfaces)
-- `app.moolu:moolu-network:1.0.0-SNAPSHOT`(`BearerTokenProvider` 类型;composition root wires HttpClient with Bearer plugin per ADR-base-019 §C1 — 5th cross-SDK reuse)
+- `app.moolu:moolu-foundation:1.0.0`(`MooluClock` + `MooluLogger` interfaces)
+- `app.moolu:moolu-network:1.0.0`(`BearerTokenProvider` 类型;composition root wires HttpClient with Bearer plugin per ADR-base-019 §C1 — 5th cross-SDK reuse)
 - `io.ktor:ktor-client-core:3.4.3`(SSE 内置 from 3.4.x;不需 ktor-client-sse 单独 artifact)
 - `io.ktor:ktor-client-content-negotiation:3.4.3`(non-stream `complete` JSON 解析)
 - `io.ktor:ktor-serialization-kotlinx-json:3.4.3`
