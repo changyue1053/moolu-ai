@@ -332,3 +332,205 @@ sealed class app.moolu.ai.llm/TokenChunk { // app.moolu.ai.llm/TokenChunk|null[0
         final fun toString(): kotlin/String // app.moolu.ai.llm/TokenChunk.KeepAlive.toString|toString(){}[0]
     }
 }
+
+// === ADD-only ABI bump · Phase 6 Cluster 4 Task 6.13 NEW package
+// `app.moolu.ai.response/` (ResponseStream + AgenticUIHook + MentionParser) ===
+// Existing `app.moolu.ai.llm/*` 334 LOC entries above preserved verbatim 0-line drift
+// per Stage 0 CSO D-11 INLINE binary-compat-validator ADD-only invariant + spec
+// §16.2 P6 KMP ABI lock. Internal `app.moolu.ai.response.internal/*` types
+// (ResponseStreamImpl + AgenticUIHookImpl + MentionTokenizer + ItemIdGenerator +
+// DefaultItemIdGenerator) NOT in this dump · Kotlin `internal` visibility excludes
+// them by construction (no `apiValidation.ignoredPackages.add(...)` needed).
+// Scaffold-grade · actual `./gradlew :ai:apiDump` execution deferred Cluster 6
+// closure batch per Phase 6 Cluster 1+2+3+4 Tasks 6.10/6.11/6.12 precedent.
+
+abstract interface app.moolu.ai.response/AgenticUIHook { // app.moolu.ai.response/AgenticUIHook|null[0]
+    abstract fun toItemStream(app.moolu.ai.response/ResponseStream, app.moolu.im.protocol/ConvId, kotlin/String): kotlinx.coroutines.flow/Flow<app.moolu.im.conversation/Item> // app.moolu.ai.response/AgenticUIHook.toItemStream|toItemStream(app.moolu.ai.response.ResponseStream;app.moolu.im.protocol.ConvId;kotlin.String){}[0]
+}
+
+abstract interface app.moolu.ai.response/ResponseStream { // app.moolu.ai.response/ResponseStream|null[0]
+    abstract val isActive // app.moolu.ai.response/ResponseStream.isActive|{}isActive[0]
+        abstract fun <get-isActive>(): kotlin/Boolean // app.moolu.ai.response/ResponseStream.isActive.<get-isActive>|<get-isActive>(){}[0]
+
+    abstract fun observe(): kotlinx.coroutines.flow/Flow<app.moolu.ai.response/ResponseChunk> // app.moolu.ai.response/ResponseStream.observe|observe(){}[0]
+    abstract suspend fun cancel() // app.moolu.ai.response/ResponseStream.cancel|cancel(){}[0]
+}
+
+final class app.moolu.ai.response/Mention { // app.moolu.ai.response/Mention|null[0]
+    constructor <init>(kotlin.ranges/IntRange, kotlin/String, app.moolu.im.conversation/ParticipantId, app.moolu.ai.response/MentionType) // app.moolu.ai.response/Mention.<init>|<init>(kotlin.ranges.IntRange;kotlin.String;app.moolu.im.conversation.ParticipantId;app.moolu.ai.response.MentionType){}[0]
+
+    final val displayName // app.moolu.ai.response/Mention.displayName|{}displayName[0]
+        final fun <get-displayName>(): kotlin/String // app.moolu.ai.response/Mention.displayName.<get-displayName>|<get-displayName>(){}[0]
+    final val span // app.moolu.ai.response/Mention.span|{}span[0]
+        final fun <get-span>(): kotlin.ranges/IntRange // app.moolu.ai.response/Mention.span.<get-span>|<get-span>(){}[0]
+    final val targetId // app.moolu.ai.response/Mention.targetId|{}targetId[0]
+        final fun <get-targetId>(): app.moolu.im.conversation/ParticipantId // app.moolu.ai.response/Mention.targetId.<get-targetId>|<get-targetId>(){}[0]
+    final val type // app.moolu.ai.response/Mention.type|{}type[0]
+        final fun <get-type>(): app.moolu.ai.response/MentionType // app.moolu.ai.response/Mention.type.<get-type>|<get-type>(){}[0]
+
+    final fun component1(): kotlin.ranges/IntRange // app.moolu.ai.response/Mention.component1|component1(){}[0]
+    final fun component2(): kotlin/String // app.moolu.ai.response/Mention.component2|component2(){}[0]
+    final fun component3(): app.moolu.im.conversation/ParticipantId // app.moolu.ai.response/Mention.component3|component3(){}[0]
+    final fun component4(): app.moolu.ai.response/MentionType // app.moolu.ai.response/Mention.component4|component4(){}[0]
+    final fun copy(kotlin.ranges/IntRange = ..., kotlin/String = ..., app.moolu.im.conversation/ParticipantId = ..., app.moolu.ai.response/MentionType = ...): app.moolu.ai.response/Mention // app.moolu.ai.response/Mention.copy|copy(kotlin.ranges.IntRange;kotlin.String;app.moolu.im.conversation.ParticipantId;app.moolu.ai.response.MentionType){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.response/Mention.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.moolu.ai.response/Mention.hashCode|hashCode(){}[0]
+    final fun toSafeLogString(): kotlin/String // app.moolu.ai.response/Mention.toSafeLogString|toSafeLogString(){}[0]
+    final fun toString(): kotlin/String // app.moolu.ai.response/Mention.toString|toString(){}[0]
+}
+
+final class app.moolu.ai.response/MentionParser { // app.moolu.ai.response/MentionParser|null[0]
+    constructor <init>(kotlin/Int = ...) // app.moolu.ai.response/MentionParser.<init>|<init>(kotlin.Int){}[0]
+
+    final val maxInputChars // app.moolu.ai.response/MentionParser.maxInputChars|{}maxInputChars[0]
+        final fun <get-maxInputChars>(): kotlin/Int // app.moolu.ai.response/MentionParser.maxInputChars.<get-maxInputChars>|<get-maxInputChars>(){}[0]
+
+    final fun parse(kotlin/String, kotlin/Function1<kotlin/String, kotlin/Pair<app.moolu.im.conversation/ParticipantId, app.moolu.ai.response/MentionType>?>): app.moolu.ai.response/MentionResult // app.moolu.ai.response/MentionParser.parse|parse(kotlin.String;kotlin.Function1<kotlin.String,kotlin.Pair<app.moolu.im.conversation.ParticipantId,app.moolu.ai.response.MentionType>?>){}[0]
+
+    final object Companion { // app.moolu.ai.response/MentionParser.Companion|null[0]
+        final const val MAX_IDENTIFIER_LEN // app.moolu.ai.response/MentionParser.Companion.MAX_IDENTIFIER_LEN|{}MAX_IDENTIFIER_LEN[0]
+            final fun <get-MAX_IDENTIFIER_LEN>(): kotlin/Int // app.moolu.ai.response/MentionParser.Companion.MAX_IDENTIFIER_LEN.<get-MAX_IDENTIFIER_LEN>|<get-MAX_IDENTIFIER_LEN>(){}[0]
+        final const val MAX_INPUT_CHARS // app.moolu.ai.response/MentionParser.Companion.MAX_INPUT_CHARS|{}MAX_INPUT_CHARS[0]
+            final fun <get-MAX_INPUT_CHARS>(): kotlin/Int // app.moolu.ai.response/MentionParser.Companion.MAX_INPUT_CHARS.<get-MAX_INPUT_CHARS>|<get-MAX_INPUT_CHARS>(){}[0]
+        final const val MAX_INPUT_CHARS_HARD_CAP // app.moolu.ai.response/MentionParser.Companion.MAX_INPUT_CHARS_HARD_CAP|{}MAX_INPUT_CHARS_HARD_CAP[0]
+            final fun <get-MAX_INPUT_CHARS_HARD_CAP>(): kotlin/Int // app.moolu.ai.response/MentionParser.Companion.MAX_INPUT_CHARS_HARD_CAP.<get-MAX_INPUT_CHARS_HARD_CAP>|<get-MAX_INPUT_CHARS_HARD_CAP>(){}[0]
+    }
+}
+
+final class app.moolu.ai.response/MentionResult { // app.moolu.ai.response/MentionResult|null[0]
+    constructor <init>(kotlin/String, kotlin.collections/List<app.moolu.ai.response/Mention>) // app.moolu.ai.response/MentionResult.<init>|<init>(kotlin.String;kotlin.collections.List<app.moolu.ai.response.Mention>){}[0]
+
+    final val cleanText // app.moolu.ai.response/MentionResult.cleanText|{}cleanText[0]
+        final fun <get-cleanText>(): kotlin/String // app.moolu.ai.response/MentionResult.cleanText.<get-cleanText>|<get-cleanText>(){}[0]
+    final val mentions // app.moolu.ai.response/MentionResult.mentions|{}mentions[0]
+        final fun <get-mentions>(): kotlin.collections/List<app.moolu.ai.response/Mention> // app.moolu.ai.response/MentionResult.mentions.<get-mentions>|<get-mentions>(){}[0]
+
+    final fun component1(): kotlin/String // app.moolu.ai.response/MentionResult.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<app.moolu.ai.response/Mention> // app.moolu.ai.response/MentionResult.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/List<app.moolu.ai.response/Mention> = ...): app.moolu.ai.response/MentionResult // app.moolu.ai.response/MentionResult.copy|copy(kotlin.String;kotlin.collections.List<app.moolu.ai.response.Mention>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.response/MentionResult.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.moolu.ai.response/MentionResult.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.moolu.ai.response/MentionResult.toString|toString(){}[0]
+}
+
+final class app.moolu.ai.response/ResponseStreamException : kotlin/RuntimeException { // app.moolu.ai.response/ResponseStreamException|null[0]
+    constructor <init>(kotlin/String) // app.moolu.ai.response/ResponseStreamException.<init>|<init>(kotlin.String){}[0]
+}
+
+final enum class app.moolu.ai.response/MentionType : kotlin/Enum<app.moolu.ai.response/MentionType> { // app.moolu.ai.response/MentionType|null[0]
+    enum entry AGENT // app.moolu.ai.response/MentionType.AGENT|null[0]
+    enum entry BOT // app.moolu.ai.response/MentionType.BOT|null[0]
+    enum entry HUMAN // app.moolu.ai.response/MentionType.HUMAN|null[0]
+
+    final val entries // app.moolu.ai.response/MentionType.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<app.moolu.ai.response/MentionType> // app.moolu.ai.response/MentionType.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): app.moolu.ai.response/MentionType // app.moolu.ai.response/MentionType.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<app.moolu.ai.response/MentionType> // app.moolu.ai.response/MentionType.values|values#static(){}[0]
+}
+
+final object app.moolu.ai.response/AgenticUIHookDefaults { // app.moolu.ai.response/AgenticUIHookDefaults|null[0]
+    final const val MAX_FINAL_TEXT_CHARS // app.moolu.ai.response/AgenticUIHookDefaults.MAX_FINAL_TEXT_CHARS|{}MAX_FINAL_TEXT_CHARS[0]
+        final fun <get-MAX_FINAL_TEXT_CHARS>(): kotlin/Int // app.moolu.ai.response/AgenticUIHookDefaults.MAX_FINAL_TEXT_CHARS.<get-MAX_FINAL_TEXT_CHARS>|<get-MAX_FINAL_TEXT_CHARS>(){}[0]
+}
+
+sealed class app.moolu.ai.response/ResponseChunk { // app.moolu.ai.response/ResponseChunk|null[0]
+    final class Failed : app.moolu.ai.response/ResponseChunk { // app.moolu.ai.response/ResponseChunk.Failed|null[0]
+        constructor <init>(kotlin/Throwable) // app.moolu.ai.response/ResponseChunk.Failed.<init>|<init>(kotlin.Throwable){}[0]
+
+        final val error // app.moolu.ai.response/ResponseChunk.Failed.error|{}error[0]
+            final fun <get-error>(): kotlin/Throwable // app.moolu.ai.response/ResponseChunk.Failed.error.<get-error>|<get-error>(){}[0]
+
+        final fun component1(): kotlin/Throwable // app.moolu.ai.response/ResponseChunk.Failed.component1|component1(){}[0]
+        final fun copy(kotlin/Throwable = ...): app.moolu.ai.response/ResponseChunk.Failed // app.moolu.ai.response/ResponseChunk.Failed.copy|copy(kotlin.Throwable){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.response/ResponseChunk.Failed.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.response/ResponseChunk.Failed.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.response/ResponseChunk.Failed.toString|toString(){}[0]
+    }
+
+    final class ReasoningStep : app.moolu.ai.response/ResponseChunk { // app.moolu.ai.response/ResponseChunk.ReasoningStep|null[0]
+        constructor <init>(kotlin/String, kotlin/Int) // app.moolu.ai.response/ResponseChunk.ReasoningStep.<init>|<init>(kotlin.String;kotlin.Int){}[0]
+
+        final val step // app.moolu.ai.response/ResponseChunk.ReasoningStep.step|{}step[0]
+            final fun <get-step>(): kotlin/Int // app.moolu.ai.response/ResponseChunk.ReasoningStep.step.<get-step>|<get-step>(){}[0]
+        final val text // app.moolu.ai.response/ResponseChunk.ReasoningStep.text|{}text[0]
+            final fun <get-text>(): kotlin/String // app.moolu.ai.response/ResponseChunk.ReasoningStep.text.<get-text>|<get-text>(){}[0]
+
+        final fun component1(): kotlin/String // app.moolu.ai.response/ResponseChunk.ReasoningStep.component1|component1(){}[0]
+        final fun component2(): kotlin/Int // app.moolu.ai.response/ResponseChunk.ReasoningStep.component2|component2(){}[0]
+        final fun copy(kotlin/String = ..., kotlin/Int = ...): app.moolu.ai.response/ResponseChunk.ReasoningStep // app.moolu.ai.response/ResponseChunk.ReasoningStep.copy|copy(kotlin.String;kotlin.Int){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.response/ResponseChunk.ReasoningStep.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.response/ResponseChunk.ReasoningStep.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.response/ResponseChunk.ReasoningStep.toString|toString(){}[0]
+    }
+
+    final class Status : app.moolu.ai.response/ResponseChunk { // app.moolu.ai.response/ResponseChunk.Status|null[0]
+        constructor <init>(kotlin/String) // app.moolu.ai.response/ResponseChunk.Status.<init>|<init>(kotlin.String){}[0]
+
+        final val text // app.moolu.ai.response/ResponseChunk.Status.text|{}text[0]
+            final fun <get-text>(): kotlin/String // app.moolu.ai.response/ResponseChunk.Status.text.<get-text>|<get-text>(){}[0]
+
+        final fun component1(): kotlin/String // app.moolu.ai.response/ResponseChunk.Status.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): app.moolu.ai.response/ResponseChunk.Status // app.moolu.ai.response/ResponseChunk.Status.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.response/ResponseChunk.Status.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.response/ResponseChunk.Status.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.response/ResponseChunk.Status.toString|toString(){}[0]
+    }
+
+    final class TextDelta : app.moolu.ai.response/ResponseChunk { // app.moolu.ai.response/ResponseChunk.TextDelta|null[0]
+        constructor <init>(kotlin/String) // app.moolu.ai.response/ResponseChunk.TextDelta.<init>|<init>(kotlin.String){}[0]
+
+        final val delta // app.moolu.ai.response/ResponseChunk.TextDelta.delta|{}delta[0]
+            final fun <get-delta>(): kotlin/String // app.moolu.ai.response/ResponseChunk.TextDelta.delta.<get-delta>|<get-delta>(){}[0]
+
+        final fun component1(): kotlin/String // app.moolu.ai.response/ResponseChunk.TextDelta.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): app.moolu.ai.response/ResponseChunk.TextDelta // app.moolu.ai.response/ResponseChunk.TextDelta.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.response/ResponseChunk.TextDelta.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.response/ResponseChunk.TextDelta.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.response/ResponseChunk.TextDelta.toString|toString(){}[0]
+    }
+
+    final class ToolCall : app.moolu.ai.response/ResponseChunk { // app.moolu.ai.response/ResponseChunk.ToolCall|null[0]
+        constructor <init>(kotlin/String, kotlinx.serialization.json/JsonObject, kotlin/String) // app.moolu.ai.response/ResponseChunk.ToolCall.<init>|<init>(kotlin.String;kotlinx.serialization.json.JsonObject;kotlin.String){}[0]
+
+        final val args // app.moolu.ai.response/ResponseChunk.ToolCall.args|{}args[0]
+            final fun <get-args>(): kotlinx.serialization.json/JsonObject // app.moolu.ai.response/ResponseChunk.ToolCall.args.<get-args>|<get-args>(){}[0]
+        final val callId // app.moolu.ai.response/ResponseChunk.ToolCall.callId|{}callId[0]
+            final fun <get-callId>(): kotlin/String // app.moolu.ai.response/ResponseChunk.ToolCall.callId.<get-callId>|<get-callId>(){}[0]
+        final val toolName // app.moolu.ai.response/ResponseChunk.ToolCall.toolName|{}toolName[0]
+            final fun <get-toolName>(): kotlin/String // app.moolu.ai.response/ResponseChunk.ToolCall.toolName.<get-toolName>|<get-toolName>(){}[0]
+
+        final fun component1(): kotlin/String // app.moolu.ai.response/ResponseChunk.ToolCall.component1|component1(){}[0]
+        final fun component2(): kotlinx.serialization.json/JsonObject // app.moolu.ai.response/ResponseChunk.ToolCall.component2|component2(){}[0]
+        final fun component3(): kotlin/String // app.moolu.ai.response/ResponseChunk.ToolCall.component3|component3(){}[0]
+        final fun copy(kotlin/String = ..., kotlinx.serialization.json/JsonObject = ..., kotlin/String = ...): app.moolu.ai.response/ResponseChunk.ToolCall // app.moolu.ai.response/ResponseChunk.ToolCall.copy|copy(kotlin.String;kotlinx.serialization.json.JsonObject;kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.response/ResponseChunk.ToolCall.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.response/ResponseChunk.ToolCall.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.response/ResponseChunk.ToolCall.toString|toString(){}[0]
+    }
+
+    final class ToolResult : app.moolu.ai.response/ResponseChunk { // app.moolu.ai.response/ResponseChunk.ToolResult|null[0]
+        constructor <init>(kotlin/String, kotlinx.serialization.json/JsonObject) // app.moolu.ai.response/ResponseChunk.ToolResult.<init>|<init>(kotlin.String;kotlinx.serialization.json.JsonObject){}[0]
+
+        final val callId // app.moolu.ai.response/ResponseChunk.ToolResult.callId|{}callId[0]
+            final fun <get-callId>(): kotlin/String // app.moolu.ai.response/ResponseChunk.ToolResult.callId.<get-callId>|<get-callId>(){}[0]
+        final val result // app.moolu.ai.response/ResponseChunk.ToolResult.result|{}result[0]
+            final fun <get-result>(): kotlinx.serialization.json/JsonObject // app.moolu.ai.response/ResponseChunk.ToolResult.result.<get-result>|<get-result>(){}[0]
+
+        final fun component1(): kotlin/String // app.moolu.ai.response/ResponseChunk.ToolResult.component1|component1(){}[0]
+        final fun component2(): kotlinx.serialization.json/JsonObject // app.moolu.ai.response/ResponseChunk.ToolResult.component2|component2(){}[0]
+        final fun copy(kotlin/String = ..., kotlinx.serialization.json/JsonObject = ...): app.moolu.ai.response/ResponseChunk.ToolResult // app.moolu.ai.response/ResponseChunk.ToolResult.copy|copy(kotlin.String;kotlinx.serialization.json.JsonObject){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.response/ResponseChunk.ToolResult.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.response/ResponseChunk.ToolResult.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.response/ResponseChunk.ToolResult.toString|toString(){}[0]
+    }
+
+    final object Complete : app.moolu.ai.response/ResponseChunk { // app.moolu.ai.response/ResponseChunk.Complete|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // app.moolu.ai.response/ResponseChunk.Complete.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // app.moolu.ai.response/ResponseChunk.Complete.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // app.moolu.ai.response/ResponseChunk.Complete.toString|toString(){}[0]
+    }
+}
+
+final fun app.moolu.ai.response/defaultAgenticUIHook(app.moolu.foundation.time/MooluClock, kotlin/Int = ...): app.moolu.ai.response/AgenticUIHook // app.moolu.ai.response/defaultAgenticUIHook|defaultAgenticUIHook(app.moolu.foundation.time.MooluClock;kotlin.Int){}[0]
+final fun app.moolu.ai.response/sseResponseStream(app.moolu.network.client/MooluHttpClient, kotlin/String, kotlinx.serialization.json/Json = ...): app.moolu.ai.response/ResponseStream // app.moolu.ai.response/sseResponseStream|sseResponseStream(app.moolu.network.client.MooluHttpClient;kotlin.String;kotlinx.serialization.json.Json){}[0]

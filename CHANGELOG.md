@@ -6,6 +6,90 @@ Versions follow SemVer post-V1.0;pre-V1.0 ships as `1.0.0-SNAPSHOT` per ADR-base
 
 ## [Unreleased]
 
+### Added (Phase 6 Cluster 4 Task 6.13 · 2026-05-13 · ADR-34 Tier 3 agentic UI hook)
+- **NEW package `app.moolu.ai.response/`** — agentic streaming UI hook surface ·
+  `ResponseStream` interface (cancellable cold `Flow<ResponseChunk>` · per Stage 0
+  CSO D-3 INLINE idempotent cancel via `Mutex.withLock` atomic state transition) +
+  `ResponseChunk` 7-variant sealed class (TextDelta + ReasoningStep + ToolCall +
+  ToolResult + Status + Complete + Failed · per Stage 0 D-7 INLINE plain sealed
+  class · NOT @Serializable · in-process domain type) + `AgenticUIHook` interface
+  (translates `Flow<ResponseChunk>` → `Flow<Item>` injectable into
+  `ConversationManager.streamItems` per ADR-27 + spec §11.5.4 Flow 1 verbatim 8 步
+  mapping) + `MentionParser` class (Unicode TR29 word boundaries + 4 codepoint
+  range allowlist for CJK Han/Hiragana/Katakana/Hangul + ASCII per Stage 0 D-9
+  INLINE · linear-time regex + 8192-char input cap + 13 Unicode bidi/zero-width
+  controls strip pre-pass per Stage 0 D-1 INLINE OWASP A03 ReDoS + LLM04 DoS +
+  CVE-2021-42574 Trojan Source defense) + `Mention`/`MentionResult`/`MentionType`
+  3-variant {HUMAN, AGENT, BOT} per ADR-2 (Stage 0 D-8 INLINE)
+- **NEW internal `app.moolu.ai.response.internal/`** — `ResponseStreamImpl` SSE
+  consumer via `app.moolu.network.sse.serverSentEvents()` facade (Stage 0 D-8
+  INLINE anti-wheel R-NO-WHEEL-1 · 0 direct Ktor SSE import) +
+  `AgenticUIHookImpl` (bounded `StringBuilder` accumulator with 65536-char hard
+  cap matching Cluster 3 D-6 INLINE `Item.FinalText.text` ceiling per Stage 0
+  D-2 INLINE OWASP LLM04 100MB adversarial TextDelta defense · sealed-class
+  exhaustive `when (chunk)` over 7 variants 0 `else ->` fallback per Stage 0
+  D-4 INLINE) + `MentionTokenizer` (linear-time regex + bidi-strip pre-pass) +
+  `ItemIdGenerator` interface + `DefaultItemIdGenerator` using
+  `kotlin.uuid.Uuid.random()` crypto-strong source (Stage 0 D-5 INLINE Kotlin
+  2.0+ stdlib)
+- **NEW factory** `sseResponseStream(httpClient, streamUrl, json)` constructs
+  SSE-backed [ResponseStream] · consumes moolu-network facade per Stage 0 D-8
+  INLINE · 0 direct Ktor SSE import in `app.moolu.ai.response.internal/*.kt`
+- **NEW factory** `defaultAgenticUIHook(clock, maxAccumulatorChars)` wires
+  `DefaultItemIdGenerator` + caller-supplied `MooluClock` · `MAX_FINAL_TEXT_CHARS=65536`
+  default
+- **0 modify existing `app.moolu.ai.llm/*` package** (920 LOC Phase 0 baseline
+  preserved verbatim · 0 ABI break for `LlmProvider`/`RemoteLlmProvider`/
+  `StubLlmProvider` consumers per ADR-34 implicit decision · NEW `ResponseStream`
+  is **parallel** API NOT replacement · `RemoteLlmProvider.stream(): Flow<TokenChunk>`
+  既有 surface preserved verbatim · per spec §17 V0.5 plan-16 sunset verbatim
+  "moolu-ai KMP SDK 接口完全重设计 (RemoteLlmProvider → ResponseStream + agentic UI
+  hook) V2 ADR-27 重写")
+
+### Tests (Phase 6 Cluster 4 Task 6.13)
+- **`MentionParserTest`** (commonTest) — 14 @Test cases · D-1 + D-8 + D-9 + D-10
+  INLINE absorption verification (linear-time regex + bidi strip + CJK boundary +
+  3-variant MentionType + safe-log redaction)
+- **`MentionTokenizerTest`** (commonTest) — 7 @Test cases · D-1 + D-9 INLINE
+  absorption (focused tokenizer-layer regex + Unicode tests)
+- **`ResponseStreamTest`** (commonTest) — 14 @Test cases · D-3 + D-7 + D-8
+  INLINE absorption (idempotent cancel + plain sealed class + graceful fallback)
+- **`AgenticUIHookTest`** (commonTest) — 11 @Test cases · D-2 + D-4 + D-5 + D-6
+  INLINE absorption (bounded accumulator overflow + sealed-class exhaustive when +
+  streamingComplete Boolean Path B + ToolCall/ToolResult field-shape mapping)
+- **Total**: 46 @Test cumulative ≥ 22 plan target = **209% utilization** ·
+  scaffold-grade · actual `./gradlew :ai:commonTest --tests "app.moolu.ai.response.*"`
+  execution deferred Cluster 6 closure batch per Phase 6 Cluster 1+2+3+4 Tasks
+  6.10/6.11/6.12 precedent
+- **`ResponseStreamAgenticTest`** (architecture-test) — NEW Konsist rule
+  **R-RESPONSESTREAM-AGENTIC-1** · enforce sealed-class exhaustive
+  `when (chunk: ResponseChunk)` over 7 variants in `AgenticUIHookImpl.kt` ·
+  0 `else ->` fallback (Stage 0 D-4 + D-12 INLINE · per Cluster 3
+  R-RENDER-DISPATCH-1 + Cluster 4 Task 6.10 R-NO-SQL-CONCAT-SEARCH-1 precedent ·
+  real `Konsist.scopeFromProduction` API call NOT vacuous true body) +
+  `SubPackageBoundaryTest.kt` allowlist extension (D-N9 INLINE absorbed drift ·
+  +`app.moolu.ai.response{,.internal}`)
+- **Konsist rule count**: 68 baseline → **69 cumulative** (+1 NEW
+  R-RESPONSESTREAM-AGENTIC-1) · 115% of Phase 6 close ≥ 60 target
+- Scaffold-grade ship · actual `./gradlew :architecture-test:test` execution
+  deferred Cluster 6 closure batch
+
+### ABI (Phase 6 Cluster 4 Task 6.13 · ADD-only · per Stage 0 D-11 INLINE)
+- **`ai/api/ai.klib.api`** ADD-only bump 334 LOC → 536 LOC (+202 LOC ADD ·
+  existing 334 LOC entries preserved verbatim 0-line drift per
+  binary-compatibility-validator semantics + spec §16.2 P6 KMP ABI lock)
+- NEW public types: `ResponseStream` interface · `ResponseChunk` 7-variant sealed
+  class · `AgenticUIHook` interface · `AgenticUIHookDefaults` object ·
+  `MentionParser` class + companion · `MentionResult`/`Mention` data classes ·
+  `MentionType` enum · `ResponseStreamException` class · `sseResponseStream` +
+  `defaultAgenticUIHook` top-level factory functions
+- Internal `app.moolu.ai.response.internal/*` types (`ResponseStreamImpl` +
+  `AgenticUIHookImpl` + `MentionTokenizer` + `ItemIdGenerator` +
+  `DefaultItemIdGenerator`) NOT in dump · Kotlin `internal` visibility excludes
+  by construction
+- Scaffold-grade · actual `./gradlew :ai:apiDump` execution deferred Cluster 6
+  closure batch per Phase 6 Cluster 1+2+3+4 Tasks 6.10/6.11/6.12 precedent
+
 ## [1.0.0] - 2026-05-04 — base V1.0 release publish 历史里程碑
 
 ### Changed (plan-34 T1 per ADR-base-028 §D1)

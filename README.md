@@ -2,6 +2,20 @@
 
 Base AI SDK for the moolu platform — KMP `commonMain` `LlmProvider` abstraction + `RemoteLlmProvider`(OpenAI-compat SSE consumer of `moolu-app-server` `/v1/ai/chat` per [ADR-base-018](https://github.com/changyue1053/moolu-platform-meta/blob/main/docs/adr/0018-moolu-app-server-business.md) + plan-15)+ `StubLlmProvider`(offline / pre-backend fallback)。米鹿 `core-ai` 直迁 part per [architecture spec §8.5.1](https://github.com/changyue1053/moolu-platform-meta/blob/main/docs/specs/2026-04-29-im-ai-platform-architecture-design.md)。
 
+**NEW · Phase 6 Cluster 4 Task 6.13 (2026-05-13)** — V2 ADR-34 Tier 3 agentic UI hook
+surface in NEW package `app.moolu.ai.response/`:
+`ResponseStream` + `ResponseChunk` (7-variant sealed class) + `AgenticUIHook` (translates
+`Flow<ResponseChunk>` → `Flow<Item>` injectable into Cluster 2 `ConversationManager.streamItems`
+per spec §11.5.4 Flow 1 verbatim α' agentic streaming 8 步) + `MentionParser` (Unicode
+TR29 word boundaries + CJK Han/Hiragana/Katakana/Hangul · linear-time regex + bidi-strip
+defense per Stage 0 CSO D-1+D-9 INLINE OWASP A03 ReDoS + LLM04 DoS + CVE-2021-42574 Trojan
+Source). **ADD-only ABI bump** — existing `app.moolu.ai.llm/*` 920 LOC Phase 0 baseline
+preserved verbatim 0 modify · NEW `ResponseStream` is **parallel** API NOT replacement of
+existing `LlmProvider.stream(): Flow<TokenChunk>` (per spec §17 V0.5 plan-16 sunset
+verbatim "moolu-ai KMP SDK 接口完全重设计 (RemoteLlmProvider → ResponseStream + agentic UI
+hook) V2 ADR-27 重写"). See [`CHANGELOG.md`](CHANGELOG.md) `[Unreleased]` section for full
+detail + Stage 0 D-1..D-12 INLINE absorption coverage.
+
 GAV: `app.moolu:moolu-ai:1.0.0`(Maven Local pre-V1.0 per ADR-base-004)。
 
 ## 功能(plan-16 ship — V0.5)
@@ -15,6 +29,28 @@ GAV: `app.moolu:moolu-ai:1.0.0`(Maven Local pre-V1.0 per ADR-base-004)。
 | `AiEventReporter` | `AiEventReporter.kt` | Pluggable observation hook(`captureLlmError(throwable, endpoint, model)`);`NoOp` 默认;plan-21 wire Sentry-KMP |
 
 **internal**: `internal.OpenAiCompatPayloads`(8 @Serializable wire types + `OpenAiJson` Json instance + 3 helper extensions)— 不入 public ABI(`apiValidation.ignoredPackages.add("app.moolu.ai.llm.internal")`)。
+
+## NEW V2 agentic UI hook surface(plan-44 = Phase 6 Cluster 4 Task 6.13 ship · V2 ADR-34 Tier 3)
+
+| API | 文件 | 用途 |
+| --- | --- | --- |
+| `ResponseStream` interface | `response/ResponseStream.kt` | Cancellable cold `Flow<ResponseChunk>` long-connection · `observe()` + idempotent `cancel()` + `isActive` per Stage 0 CSO D-3 INLINE atomic state transition `Mutex.withLock` |
+| `ResponseChunk` sealed class | `response/ResponseStream.kt` | 7-variant in-process domain type · `TextDelta` + `ReasoningStep` + `ToolCall` + `ToolResult` + `Status` + `Complete` + `Failed` · per spec §11.5.4 Flow 1 verbatim 8 步 mapping |
+| `sseResponseStream(...)` factory | `response/ResponseStream.kt` | Constructs SSE-backed `ResponseStream` via moolu-network `serverSentEvents()` facade · 0 direct Ktor SSE import per Stage 0 D-8 INLINE anti-wheel R-NO-WHEEL-1 |
+| `AgenticUIHook` interface | `response/AgenticUIHook.kt` | Translates `Flow<ResponseChunk>` → `Flow<Item>` injectable into Cluster 2 `ConversationManager.streamItems` downstream · sealed-class exhaustive `when (chunk)` over 7 variants · architecture-test `R-RESPONSESTREAM-AGENTIC-1` Konsist enforce |
+| `defaultAgenticUIHook(...)` factory | `response/AgenticUIHook.kt` | Wires `DefaultItemIdGenerator` (`kotlin.uuid.Uuid.random()` crypto-strong) + caller-supplied `MooluClock` · `MAX_FINAL_TEXT_CHARS=65536` accumulator hard cap default |
+| `MentionParser` class | `response/MentionParser.kt` | Linear-time regex + 8192-char input cap + bidi/zero-width strip pre-pass + 4 Unicode codepoint range allowlist (CJK Han/Hiragana/Katakana/Hangul) per Stage 0 D-1+D-9 INLINE OWASP A03 ReDoS + LLM04 DoS + CVE-2021-42574 Trojan Source defense |
+| `Mention`/`MentionResult`/`MentionType` | `response/MentionParser.kt` | Resolved mention surface · `MentionType` 3-variant `{ HUMAN, AGENT, BOT }` per ADR-2 (Stage 0 D-8 INLINE) · `Mention.toSafeLogString()` PII-redacted log string per Stage 0 D-10 INLINE |
+
+**internal · `app.moolu.ai.response.internal/`**:
+- `ResponseStreamImpl(source: Flow<ResponseChunk>)` — `Mutex.withLock` cancel + `MutableStateFlow<Boolean>` state · per Stage 0 D-3 INLINE
+- `AgenticUIHookImpl(clock, itemIdGenerator, maxAccumulatorChars)` — bounded `StringBuilder` accumulator + sealed-class exhaustive `when (chunk)` 7-variant · per Stage 0 D-2+D-4+D-5+D-6 INLINE
+- `MentionTokenizer` — low-level `@identifier` token detection + bidi-strip helpers
+- `ItemIdGenerator` interface + `DefaultItemIdGenerator` (`kotlin.uuid.Uuid.random()`) · per Stage 0 D-5 INLINE
+
+**Backward compatibility**: NEW `app.moolu.ai.response/` is **parallel** API · 0 ABI break for existing `LlmProvider`/`RemoteLlmProvider`/`StubLlmProvider` consumers · `RemoteLlmProvider.stream(): Flow<TokenChunk>` 既有 surface preserved per ADR-34 implicit decision · Composition root MUST pick exactly one API per conversation (cost amplification mitigation · server-side ai-gateway gate per ADR-20 authoritative).
+
+Cite: V2 [ADR-34](https://github.com/changyue1053/moolu-platform-meta/blob/main/docs/adr/2026-05-06-base-v2-greenfield-architecture-design.md#15-37-adr-index) Tier 3 moolu-ai 行 + V2 [spec §11.1 figure verbatim](https://github.com/changyue1053/moolu-platform-meta/blob/main/docs/specs/2026-05-06-base-v2-greenfield-architecture-design.md#section-11) "moolu-ai · ResponseStream·Tool · Mention parser·UI hook" + V2 spec §11.5.4 Flow 1 α' agentic streaming 8 步 verbatim mapping + V2 spec §17 V0.5 plan-16 sunset verbatim "RemoteLlmProvider → ResponseStream + agentic UI hook V2 ADR-27 重写".
 
 ## 依赖
 
