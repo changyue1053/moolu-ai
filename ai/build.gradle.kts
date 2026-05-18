@@ -44,6 +44,10 @@ kotlin {
             // Network SDK (BearerTokenProvider type — composition root wires HttpClient with Bearer plugin
             // per ADR-base-019 §C1; 5th cross-SDK reuse path: network → account → app-server → 米鹿 wire → ai SDK)
             api(libs.moolu.network)
+            // Phase 8 Cluster 3 Task 8.7 Stage 1b' D20: IM SDK conversation/ package
+            // (Item / ConversationId / ParticipantId / ItemId) consumed by Task 6.13 NEW
+            // app.moolu.ai.response/* package at AgenticUIHook → Flow<Item> translation seam.
+            api(libs.moolu.im)
 
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)

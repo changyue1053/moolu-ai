@@ -29,8 +29,12 @@ ktlint-gradle = "14.2.0"
 binary-compat-validator = "0.18.1"
 
 # Moolu base SDK (plan-16 deps: foundation + network — BearerTokenProvider 5th cross-SDK reuse per ADR-019 §C1)
-moolu-foundation = "1.0.0"
-moolu-network = "1.0.0"
+# Phase 8 Cluster 3 Task 8.7 Stage 1b' D20: add moolu-im 2.0.0 dep — Task 6.13 NEW
+# package app.moolu.ai.response/* consumes app.moolu.im.conversation.{Item, ConversationId,
+# ParticipantId, ItemId} (Cluster 2 Task 6.6 baseline) for AgenticUIHook → Flow<Item> seam.
+moolu-foundation = "2.0.0"
+moolu-network = "2.0.0"
+moolu-im = "2.0.0"
 
 # Ktor (SSE + ContentNegotiation; same 3.4.x as moolu-account plan-14 STAY per ADR-019 §1)
 ktor = "3.4.3"
@@ -44,6 +48,10 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 # Moolu base SDK
 moolu-foundation = { module = "app.moolu:moolu-foundation", version.ref = "moolu-foundation" }
 moolu-network = { module = "app.moolu:moolu-network", version.ref = "moolu-network" }
+# Phase 8 Cluster 3 Task 8.7 Stage 1b' D20: moolu-im 2.0.0 — Task 6.13 NEW agentic
+# response/ package consumes app.moolu.im.conversation.* (Item / ConversationId /
+# ParticipantId / ItemId) at AgenticUIHook → Flow<Item> translation seam.
+moolu-im = { module = "app.moolu:moolu-im", version.ref = "moolu-im" }
 
 # Ktor (SSE built-in via ktor-client-core 3.4.x; ContentNegotiation for non-stream complete; mock for tests)
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

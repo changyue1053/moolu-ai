@@ -36,7 +36,9 @@
  *   contract (errors flow through ResponseChunk.Failed terminal frame)
  *
  * Phase 6 Cluster 4 Task 6.13 NEW · KMP commonMain · 0 modify existing
- * `app.moolu.ai.llm/*` package 920 LOC Phase 0 baseline preserved.
+ * `app.moolu.ai.llm/` package 920 LOC Phase 0 baseline preserved (escape
+ * removed `*` glob char per Kotlin nested-comment lexer fix · Phase 8 Cluster 3
+ * Task 8.7 Stage 1b' D16 source fix).
  *
  * Subagent model used: claude-opus-4-7-thinking-xhigh per
  * `subagent-protocol.md §4` Iron rule #1 verbatim canonical primary.

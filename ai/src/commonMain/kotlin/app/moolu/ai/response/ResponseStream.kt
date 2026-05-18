@@ -31,7 +31,9 @@
  *   ResponseChunk variants.
  *
  * Phase 6 Cluster 4 Task 6.13 NEW · KMP commonMain · 0 modify existing
- * `app.moolu.ai.llm/*` package 920 LOC Phase 0 baseline preserved.
+ * `app.moolu.ai.llm/` package 920 LOC Phase 0 baseline preserved (escape
+ * removed `*` glob char per Kotlin nested-comment lexer fix · Phase 8 Cluster 3
+ * Task 8.7 Stage 1b' D16 source fix).
  *
  * Subagent model used: claude-opus-4-7-thinking-xhigh per
  * `subagent-protocol.md §4` Iron rule #1 verbatim canonical primary.
@@ -231,7 +233,8 @@ public sealed class ResponseChunk {
  * **Stage 0 CSO D-8 INLINE · CRITICAL anti-wheel R-NO-WHEEL-1 network**: this
  * factory consumes the moolu-network facade [serverSentEvents] extension fun ·
  * 0 direct `io.ktor.client.plugins.sse.sse` import in
- * `app.moolu.ai.response.internal/*.kt` package. Note: existing
+ * `app.moolu.ai.response.internal/` package files (Kotlin nested-comment lexer
+ * fix · Phase 8 Cluster 3 Task 8.7 Stage 1b' D16 source fix). Note: existing
  * [app.moolu.ai.llm.RemoteLlmProvider.stream] (920 LOC `llm/` package) calls
  * `httpClient.sse(...)` directly per V0.5 plan-15 baseline · pre-Phase-6
  * baseline preserved 0 modify per Stage 0 D-15 REJECT scope discipline.
